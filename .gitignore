@@ -106,3 +106,7 @@ fabric.properties
 DoNotPush.php
 _ide_helper.php
 readme.md
+storage/debugbar/
+ .idea/hapo-intern.iml
+ .idea/php.xml
+
