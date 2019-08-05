@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: jvgiv
  * Date: 8/1/2019
- * Time: 3:34 PM
+ * Time: 5:29 PM
  */
 
 namespace App\Model;
@@ -12,20 +12,25 @@ namespace App\Model;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Report extends Model
+class Role extends Model
 {
     use SoftDeletes;
-    protected $table = 'reports';
+    protected $table = 'roles';
     protected $dates = ['deleted_at'];
-    protected $fillable = ['id', 'name', 'description', 'user_id'];
+    protected $fillable = ['id', 'name'];
 
     public function user()
     {
-        return $this->belongsTo('App\Model\User', 'user_id');
+        return $this->hasMany('App\Model\User');
     }
 
-    public function tasks()
+    public function customer()
     {
-        return $this->belongsToMany('App\Model\Task');
+        return $this->hasMany('App\Model\Customer');
+    }
+
+    public function admin()
+    {
+
     }
 }

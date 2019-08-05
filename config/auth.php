@@ -68,7 +68,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Model\User::class,
         ],
 
         // 'users' => [
@@ -99,5 +99,9 @@ return [
             'expire' => 60,
         ],
     ],
+
+    'role_user' => '1',
+    'role_customer' => '2',
+    'role_admin' => '3',
 
 ];
