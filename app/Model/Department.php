@@ -16,10 +16,10 @@ class Department extends Model
     use SoftDeletes;
     protected $table = 'departments';
     protected $dates = ['deleted_at'];
-    protected $fillable = ['id', 'name', 'manager_id'];
+    protected $fillable = ['id', 'name'];
 
     public function user()
     {
-        return $this->hasMany('App\Model\User', 'manager_id');
+        return $this->hasMany('App\Model\User');
     }
 }

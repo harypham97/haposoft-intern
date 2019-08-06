@@ -19,6 +19,11 @@ use App\Notifications\MailResetPasswordNotification;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
+    const NUMBER_PER_PAGE = 10;
+    const ROLE_USER = 1;
+    const ROLE_CUSTOMER = 2;
+    const ROLE_ADMIN = 3;
+
     use SoftDeletes, Authenticatable, CanResetPassword, Notifiable;
 
     protected $table = 'users';
@@ -40,7 +45,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function department()
     {
-        return $this->belongsTo('App\Model\Department', 'department_id');
+        return $this->belongsTo('App\Model\Department');
     }
 
     public function projects()
