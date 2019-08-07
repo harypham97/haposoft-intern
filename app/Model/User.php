@@ -38,5 +38,9 @@ class Users extends Model
     {
 
     }
+<<<<<<< HEAD
 
 }
+=======
+}
+>>>>>>> 2d0f237... crud login logout

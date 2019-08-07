@@ -36,11 +36,14 @@ return [
     */
 
     'guards' => [
+        'user' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
         ],
-
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
@@ -98,6 +101,14 @@ return [
             'table' => 'password_resets',
             'expire' => 60,
         ],
+<<<<<<< HEAD
+=======
+        'admins' => [
+            'provider' => 'admin',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+>>>>>>> 2d0f237... crud login logout
     ],
 
 ];

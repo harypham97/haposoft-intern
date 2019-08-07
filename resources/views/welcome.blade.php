@@ -85,10 +85,9 @@
                 </div>
 
                 <div class="links">
-                    <a href="#">Users</a>
-                    <a href="#">Customers</a>
+                    <a href="{{route('login')}}">Users</a>
+                    <a href="{{}}">Customers</a>
                     <a href="#">Admin</a>
-
                 </div>
             </div>
         </div>
