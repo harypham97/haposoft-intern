@@ -21,11 +21,11 @@ class Report extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\Model\User', 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function tasks()
     {
-        return $this->belongsToMany('App\Model\Task');
+        return $this->belongsToMany(Task::class);
     }
 }

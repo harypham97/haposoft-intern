@@ -22,16 +22,16 @@ class Task extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\Model\User','user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function project()
     {
-        return $this->belongsTo('App\Model\Project','project_id');
+        return $this->belongsTo(Project::class);
     }
 
     public function reports()
     {
-        return $this->belongsToMany('App\Model\Report');
+        return $this->belongsToMany(Report::class);
     }
 }

@@ -19,14 +19,14 @@ class Role extends Model
     protected $dates = ['deleted_at'];
     protected $fillable = ['id', 'name'];
 
-    public function user()
+    public function users()
     {
-        return $this->hasMany('App\Model\User');
+        return $this->hasMany(User::class);
     }
 
-    public function customer()
+    public function customers()
     {
-        return $this->hasMany('App\Model\Customer');
+        return $this->hasMany(Customer::class);
     }
 
     public function admin()

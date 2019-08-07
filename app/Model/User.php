@@ -40,27 +40,27 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function role()
     {
-        return $this->belongsTo('App\Model\Role');
+        return $this->belongsTo(Role::class);
     }
 
     public function department()
     {
-        return $this->belongsTo('App\Model\Department');
+        return $this->belongsTo(Department::class);
     }
 
     public function projects()
     {
-        return $this->belongsToMany('App\Model\Project');
+        return $this->belongsToMany(Project::class);
     }
 
-    public function task()
+    public function tasks()
     {
-        return $this->hasMany('App\Model\Task');
+        return $this->hasMany(Task::class);
     }
 
-    public function report()
+    public function reports()
     {
-        return $this->hasMany('App\Model\Report');
+        return $this->hasMany(Report::class);
     }
 
     public function sendPasswordResetNotification($token)

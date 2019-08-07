@@ -18,8 +18,8 @@ class Department extends Model
     protected $dates = ['deleted_at'];
     protected $fillable = ['id', 'name'];
 
-    public function user()
+    public function users()
     {
-        return $this->hasMany('App\Model\User');
+        return $this->hasMany(User::class);
     }
 }

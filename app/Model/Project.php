@@ -22,16 +22,16 @@ class Project extends Model
 
     public function users()
     {
-        return $this->belongsToMany('App\Model\User');
+        return $this->belongsToMany(User::class);
     }
 
     public function tasks()
     {
-        return $this->hasMany('App\Model\Task');
+        return $this->hasMany(Task::class);
     }
 
     public function customer()
     {
-        return $this->belongsTo('App\Model\Customer', 'customer_id');
+        return $this->belongsTo(Customer::class);
     }
 }

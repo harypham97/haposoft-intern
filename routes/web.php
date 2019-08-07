@@ -26,3 +26,4 @@ Route::namespace('Admin')->group(function () {
     });
 });
 Route::get('/login/admin', 'Auth\LoginController@showAdminLoginForm');
+
