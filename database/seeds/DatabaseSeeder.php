@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
             CustomersTableSeeder::class,
             ProjectsTableSeeder::class,
             TasksTableSeeder::class,
-            ReportsTableSeeder::class
+            ReportsTableSeeder::class,
+            AdminsTableSeeder::class
         ]);
     }
 }

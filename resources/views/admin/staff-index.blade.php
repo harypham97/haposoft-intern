@@ -2,7 +2,9 @@
 @section('title', 'Staffs')
 @section('content')
     <div class="container-fluid">
-        <button class="btn btn-primary mt-3 mb-3">Add new staff</button>
+        <form method="GET" action="{{route('staffs.create')}}">
+            <button class="btn btn-primary mt-3 mb-3" style="cursor:pointer"> Add new staff</button>
+        </form>
         <table class="table table-bordered table-hover">
             <thead>
             <tr>
@@ -13,23 +15,24 @@
             </tr>
             </thead>
             <tbody>
-            @foreach($data as $user)
+            @foreach($data as $staff)
                 <tr>
-                    <th>{{$user->id}}</th>
-                    <td>{{$user->name}}</td>
-                    <td>{{$user->email}}</td>
+                    <th>{{$staff->id}}</th>
+                    <td>{{$staff->name}}</td>
+                    <td>{{$staff->email}}</td>
                     <td class="d-flex">
-                        <button class="btn btn-outline-primary btnInfoModal" id="{{$user->id}}" title="View && Edit">
+                        <button class="btn btn-outline-primary btnInfoModal" id="{{$staff->id}}" title="View">
                             <i class="fa fa-fw fa-search"></i>
                         </button>
-                        {{--<button class="btn btn-outline-warning ml-3 mr-3 btnInfoModal" id="editInfoStaff" title="Edit">--}}
-                        {{--<i class="fa fa-fw fa-edit"></i>--}}
-                        {{--</button>--}}
-                        <form method="POST" action="{{ route('staffs.destroy', [$user->id]) }}">
+                        <a class="btn btn-outline-warning ml-3 mr-3" id="{{$staff->id}}" title="Edit"
+                           href="{{route('staffs.edit',$staff->id)}}">
+                            <i class="fa fa-fw fa-edit"></i>
+                        </a>
+                        <form method="POST" action="{{ route('staffs.destroy', [$staff->id]) }}">
                             {{ csrf_field() }}
                             {{ method_field('DELETE') }}
                             <button class="btn btn-outline-danger" type="submit" title="Delete"
-                                    onclick="return confirm('Are you sure you want to delete the record {{ $user->id }} ?')">
+                                    onclick="return confirm('Are you sure you want to delete the record {{ $staff->id }} ?')">
                                 <i class="fa fa-fw fa-trash"></i>
                             </button>
                         </form>
@@ -40,7 +43,6 @@
         </table>
         {{ $data->links('pagination::bootstrap-4') }}
     </div>
-
 
     <!-- Modal -->
     <div class="modal fade" id="infoStaffModal" tabindex="-1" role="dialog" aria-labelledby="infoStaffLabel"
@@ -54,7 +56,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form method="POST" id="formInfo" enctype="multipart/form-data">
                         <input class="d-none" id="idStaff">
                         <div class="d-flex flex-row row">
                             <div class="col-6">
@@ -82,13 +84,9 @@
                             </div>
                             <div class="col-6 d-flex">
                                 <label id="avatar" class="">Avatar:</label>
-                                <img class="img-staff ml-lg-3" src="{{asset('public/storage/images/ahihi.jpg')}}"
-                                     alt="avatar-staff">
-                                <input type="file" name="avatar" class="">
-
+                                <img class="img-staff ml-lg-3" alt="avatar-staff" id="avatarStaff">
                             </div>
                         </div>
-
                         <div class="form-group row">
                             <label for="email" class="col-sm-1 col-form-label">Email:</label>
                             <div class="col-sm-11">
@@ -113,8 +111,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-info" id="editInfoStaff">Edit >></button>
-                    <button type="button" class="btn btn-primary d-none" id="saveInfoStaff">Save</button>
                 </div>
             </div>
         </div>

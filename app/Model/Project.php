@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends Model
 {
+    const NUMBER_PER_PAGE = 5;
     use SoftDeletes;
     protected $table = 'projects';
     protected $dates = ['deleted_at'];

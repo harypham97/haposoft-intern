@@ -23,7 +23,7 @@ class Customer extends Model
         return $this->belongsTo('App\Model\Role', 'role_id');
     }
 
-    public function project()
+    public function projects()
     {
         return $this->hasMany('App\Model\Project');
     }

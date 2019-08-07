@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
     $('.btnInfoModal').on('click', function () {
         var id = $(this).attr('id');
 
@@ -10,37 +9,24 @@ $(document).ready(function () {
                 },
             type: "GET",
             url: "/hapo-intern/admin/staffs/" + id,
-            success: function (results) {
-                $('#nameStaff').val(results['name']);
-                $('#deptStaff').val(results['dept_name']);
-                $('#emailStaff').val(results['email']);
-                $('#dobStaff').val(results['dob']);
-                $('#phoneStaff').val(results['phone']);
-                $('#cityStaff').val(results['city']);
-                $('#idStaff').val(results['id']);
-                console.log(results);
+            success: function (data) {
+                $('#nameStaff').val(data['name']);
+                $('#deptStaff').val(data['dept_name']);
+                $('#emailStaff').val(data['email']);
+                $('#dobStaff').val(data['dob']);
+                $('#phoneStaff').val(data['phone']);
+                $('#cityStaff').val(data['city']);
+                $('#idStaff').val(data['id']);
+
+                var base_url = window.location.origin + '/hapo-intern/public/storage/' + data['avatar'];
+
+                $('#avatarStaff').attr('width', 150);
+                $('#avatarStaff').attr('height', 150);
+                $('#avatarStaff').attr('src', base_url);
+
+                console.log(data);
             }
         });
-
         $('#infoStaffModal').modal('show');
-
     });
-
-    $('#editInfoStaff').on('click', function () {
-
-        $('.inputInfoModal').attr("readonly", false);
-        $('.inputInfoModal').removeClass('form-control-plaintext').addClass('form-control');
-        $('#editInfoStaff').hide();
-        $('#saveInfoStaff').removeClass('d-none');
-
-        var id = $('#idStaff').val();
-
-    });
-
-    $('#infoStaffModal').on('hidden.bs.modal', function () {
-        $('.inputInfoModal').attr("readonly", true);
-        $('.inputInfoModal').removeClass('form-control').addClass('form-control-plaintext');
-        $('#editInfoStaff').show();
-        $('#saveInfoStaff').addClass('d-none');
-    })
 });
