@@ -1,5 +1,6 @@
 @extends('admin.layouts.default')
 @section('title', 'Create Projects')
+@section('name_feature', 'Create new Project')
 @section('content')
     <div class="container-fluid">
         <div class="container mt-3">

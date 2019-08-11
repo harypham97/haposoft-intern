@@ -19,7 +19,7 @@ use App\Notifications\MailResetPasswordNotification;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
-    const NUMBER_PER_PAGE = 10;
+    const NUMBER_PER_PAGE = 5;
     const ROLE_USER = 1;
     const ROLE_CUSTOMER = 2;
     const ROLE_ADMIN = 3;
@@ -50,7 +50,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function projects()
     {
-        return $this->belongsToMany(Project::class);
+        return $this->belongsToMany(Project::class)->withPivot('date_start','date_finish');
     }
 
     public function tasks()

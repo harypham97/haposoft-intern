@@ -129,9 +129,20 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'email' => [
+            'unique' => 'Oops! This email \'s already been taken'
         ],
+        'phone' => [
+            'numeric' => ' The phone number must be numerical value',
+            'digits_between:10,15' => 'The phone number must be between 10 and 15 digits'
+        ],
+        'department_id' => [
+            'numeric' => 'Don\'t forget to choose your department!'
+        ],
+        'avatar' => [
+            'image' => 'Upload an image file, ex: jpeg, png...'
+        ],
+
     ],
 
     /*
@@ -145,6 +156,13 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'email' => 'staff\'s email',
+        'name' => 'staff\'s name',
+        'dob' => 'date of birth',
+        'phone' => 'phone number',
+        'department_id' => 'department\'s name',
+        'avatar' => 'staff\'s avatar',
+    ],
 
 ];

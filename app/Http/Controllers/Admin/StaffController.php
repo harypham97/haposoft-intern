@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\StaffRequest;
 use App\Model\Department;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -17,9 +18,9 @@ class StaffController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(User::NUMBER_PER_PAGE);
+        $users = User::orderBy('id', 'desc')->paginate(User::NUMBER_PER_PAGE);
         $data = ['data' => $users];
-        return view('admin.staff-index', $data);
+        return view('admin.staffs.index', $data);
 
     }
 
@@ -30,9 +31,9 @@ class StaffController extends Controller
      */
     public function create()
     {
-        $department = Department::all();
+        $department = Department::all()->sortBy('name');
         $data = ['data' => $department];
-        return view('admin.staff-create', $data);
+        return view('admin.staffs.create', $data);
     }
 
     /**
@@ -41,7 +42,7 @@ class StaffController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StaffRequest $request)
     {
         $path = null;
         $input = $request->except('avatar', '_method');
@@ -52,7 +53,7 @@ class StaffController extends Controller
         $input['password'] = \Hash::make($request->get('password'));
         $input['role_id'] = User::ROLE_USER;
         User::create($input);
-        return redirect('/admin/staffs')->with('message', __('messages.user_create'));
+        return redirect('/admin/staffs')->with('message', __('messages.staff_create'));
     }
 
     /**
@@ -78,9 +79,9 @@ class StaffController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        $departments = Department::all();
+        $departments = Department::all()->sortBy('name');
         $data = ['user' => $user, 'departments' => $departments];
-        return view('admin.staff-update', compact('data'));
+        return view('admin.staffs.edit', compact('data'));
     }
 
     /**
@@ -90,7 +91,7 @@ class StaffController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StaffRequest $request, $id)
     {
         $path = null;
         $input = $request->except('avatar', '_method', '_token');
@@ -102,7 +103,7 @@ class StaffController extends Controller
             $input['avatar'] = $path;
         }
         $user->update($input);
-        return redirect('/admin/staffs')->with('message', __('messages.user_update'));
+        return redirect('/admin/staffs')->with('message', __('messages.staff_update'));
     }
 
     /**
@@ -114,6 +115,6 @@ class StaffController extends Controller
     public function destroy($id)
     {
         User::findOrFail($id)->delete();
-        return redirect('/admin/staffs')->with('message', __('messages.user_destroy'));
+        return redirect('/admin/staffs')->with('message', __('messages.staff_destroy'));
     }
 }

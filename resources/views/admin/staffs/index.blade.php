@@ -1,10 +1,14 @@
 @extends('admin.layouts.default')
 @section('title', 'Staffs')
+@section('name_feature', 'List Staffs')
 @section('content')
     <div class="container-fluid">
         <form method="GET" action="{{route('staffs.create')}}">
             <button class="btn btn-primary mt-3 mb-3" style="cursor:pointer"> Add new staff</button>
         </form>
+        @if (Session::has('message'))
+            <p style="color: red">{{ Session::get('message') }}</p>
+        @endif
         <table class="table table-bordered table-hover">
             <thead>
             <tr>
@@ -32,7 +36,7 @@
                             {{ csrf_field() }}
                             {{ method_field('DELETE') }}
                             <button class="btn btn-outline-danger" type="submit" title="Delete"
-                                    onclick="return confirm('Are you sure you want to delete the record {{ $staff->id }} ?')">
+                                    onclick="return confirm('Are you sure you want to delete the record of {{ $staff->name }} ?')">
                                 <i class="fa fa-fw fa-trash"></i>
                             </button>
                         </form>

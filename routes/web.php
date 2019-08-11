@@ -23,11 +23,11 @@ Route::namespace('Admin')->group(function () {
         Route::resource('', 'HomeController');
         Route::resource('staffs', 'StaffController');
         Route::resource('projects', 'ProjectController');
-        Route::resource('project-user', 'ProjectUserController');
+        Route::resource('project_user', 'ProjectUserController');
+
     });
 });
 
 Route::get('/login/admin', 'Auth\LoginController@showAdminLoginForm');
 Route::post('/login/admin', 'Auth\LoginController@adminLogin');
-
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');

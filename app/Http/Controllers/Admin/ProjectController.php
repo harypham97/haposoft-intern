@@ -17,19 +17,9 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::paginate(Project::NUMBER_PER_PAGE);
-        foreach ($projects as $project) {
-            $customer_name = $project->customer()->firstOrFail()->name;
-            $project['customer_name'] = $customer_name;
-            $users = $project->users()->get();
-            $user_name = array();
-            foreach ($users as $user) {
-                array_push($user_name, $user->name);
-            }
-            $project['user_name'] = $user_name;
-        }
+        $projects = Project::with(['customer','users'])->paginate(Project::NUMBER_PER_PAGE);
         $data = ['data' => $projects];
-        return view('admin.project-index', $data);
+        return view('admin.projects.index', $data);
     }
 
     /**
@@ -41,7 +31,7 @@ class ProjectController extends Controller
     {
         $customers = Customer::all();
         $data = ['data' => $customers];
-        return view('admin.project-create', $data);
+        return view('admin.projects.create', $data);
     }
 
     /**
@@ -101,4 +91,5 @@ class ProjectController extends Controller
         Project::findOrFail($id)->delete();
         return redirect('/admin/projects')->with('message', __('messages.user_destroy'));
     }
+
 }
