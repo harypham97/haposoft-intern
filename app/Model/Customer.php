@@ -8,14 +8,23 @@
 
 namespace App\Model;
 
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Customers extends Model
+class Customer extends Model
 {
     use SoftDeletes;
     protected $table = 'customers';
     protected $dates = ['deleted_at'];
-    protected $fillable = ['id', 'email', 'full_name', 'company_name', 'phone_number', 'content', 'avatar'];
+    protected $fillable = ['id', 'email', 'password', 'name', 'company', 'phone', 'avatar', 'role_id'];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }

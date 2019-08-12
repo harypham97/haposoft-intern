@@ -13,10 +13,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
-class Tasks extends Model
+class Task extends Model
 {
     use SoftDeletes;
     protected $table = 'tasks';
     protected $dates = ['deleted_at'];
-    protected $fillable = ['id', 'email', 'full_name', 'company_name', 'phone_number', 'content', 'avatar'];
+    protected $fillable = ['id', 'name', 'hour', 'project_id', 'user_id'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function reports()
+    {
+        return $this->belongsToMany(Report::class);
+    }
 }
