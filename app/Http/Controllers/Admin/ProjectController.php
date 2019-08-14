@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Model\Customer;
-use App\Model\Project;
-use App\Model\User;
-use Illuminate\Http\Request;
+use App\Http\Requests\ProjectResquest;
+use App\Models\Customer;
+use App\Models\Project;
 use App\Http\Controllers\Controller;
 
 class ProjectController extends Controller
@@ -17,7 +16,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::with(['customer','users'])->paginate(Project::NUMBER_PER_PAGE);
+        $projects = Project::with(['customer', 'users'])->orderByDesc('id')->paginate(config('variables.number_per_page'));
         $data = ['data' => $projects];
         return view('admin.projects.index', $data);
     }
@@ -29,7 +28,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        $customers = Customer::all();
+        $customers = Customer::all()->sortBy('name');
         $data = ['data' => $customers];
         return view('admin.projects.create', $data);
     }
@@ -40,10 +39,10 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProjectResquest $request)
     {
         Project::create($request->all());
-        return redirect('/admin/projects')->with('message', __('messages.user_create'));
+        return redirect('/admin/projects')->with('message', __('messages.project_create'));
     }
 
     /**
@@ -65,7 +64,13 @@ class ProjectController extends Controller
      */
     public function edit($id)
     {
-        //
+        $project = Project::findOrFail($id);
+        $customers = Customer::all()->sortBy('name');
+        $data = [
+            'project' => $project,
+            'customers' => $customers
+        ];
+        return view('admin.projects.edit', $data);
     }
 
     /**
@@ -75,9 +80,11 @@ class ProjectController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ProjectResquest $request, $id)
     {
-        //
+        $project = Project::findOrFail($id);
+        $project->update($request->all());
+        return redirect('/admin/projects')->with('message', __('messages.project_update'));
     }
 
     /**
@@ -89,7 +96,7 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         Project::findOrFail($id)->delete();
-        return redirect('/admin/projects')->with('message', __('messages.user_destroy'));
+        return redirect('/admin/projects')->with('message', __('messages.project_destroy'));
     }
 
 }

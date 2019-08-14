@@ -1,132 +1,110 @@
 $(document).ready(function () {
 
-    $(".modal").on("hidden.bs.modal", function(){
-        $("#tableEdit tbody").empty();
-    });
+    var baseUrl = window.location.origin;
 
-    $("a#showListCheckBox").click(function (e) {
-        e.preventDefault();
-        var flag = $('input#flag').val();
-        if (flag === 'true') {
-            $("#loopCheckBox").removeClass("d-none").addClass("d-flex");
-            $('input#flag').val('false');
-        }
-        else {
-            $("#loopCheckBox").removeClass("d-flex").addClass("d-none");
-            $('input#flag').val('true');
-        }
-    });
-
-//     $.ajax({
-//         headers:
-//             {
-//                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//             },
-//         type: "GET",
-//         url: "/hapo-intern/ajax/getAllProjectUser/",
-//         success: function (data) {
-//             console.log(data);
-//             //function(key,value)
-//             var trHTML = '';
-//             $.each(data, function (i, project) {
-//                 if (project.users.length > 0) {
-//
-//                     $.each(project.users, function (i, user) {
-//                         trHTML += '<tr>' +
-//                             '<td>' + project.name + '</td>' +
-//                             '<td>' + project.date_start + '</td>' +
-//                             '<td>' + project.date_finish + '</td>' +
-//                             '<td>' + user.name + '</td>' +
-//                             '<td>' + user.pivot.date_start + '</td>' +
-//                             '<td>' + user.pivot.date_finish + '</td>' +
-//                             '</tr>';
-//                     });
-//                 } else {
-//                     trHTML += '<tr>' +
-//                         '<td>' + project.name + '</td>' +
-//                         '<td>' + project.date_start + '</td>' +
-//                         '<td>' + project.date_finish + '</td>' +
-//                         '<td></td>' +
-//                         '<td></td>' +
-//                         '<td></td>' +
-//                         '</tr>';
-//
-//
-//                 }
-//
-//
-//             });
-//
-//             $('#tableProjectUser').append(trHTML);
-//         }
-//     });
-//
-//
-    $('#btnAddNew').on('click', function (e) {
-        e.preventDefault(); // this prevents the form from submitting
-        var formData = new FormData($('form#formAddUserProject')[0]);
-        var listIdUser = [];
-        var url = $('#formAddUserProject').attr('action')
-
-        $.each($("input[name='checkBoxUserID']:checked"), function () {
-            listIdUser.push($(this).val());
-        });
-
-        formData.append('listIdUser', JSON.stringify(listIdUser));
-
-        $.ajax({
-            headers:
-                {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-            processData: false,
-            contentType: false,
-            type: 'POST',
-            url: url,
-            data: formData,
-            success: function (data) {
-                alert('Done!!!');
-                window.location.reload();
-                console.log(data);
-            },
-            error: function (e) {
-                console.log(e);
-            }
-        });
-
-    });
-
-    $('.btnEdit').on('click', function (e) {
-        e.preventDefault();
-        var id = $(this).attr("value");
+    $('#inputDepartment').on('change', function () {
+        var departmentId = $('#inputDepartment').val();
         $.ajax({
             headers:
                 {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
             type: "GET",
-            url: 'http://localhost:8080/hapo-intern/admin/project-user/'+id+'/edit',
+            url: baseUrl + '/hapo-intern/admin/ajax/getUserByDepartment/' + departmentId,
             success: function (data) {
-                $('#editModalTitle').text(data.project.name);
+                console.log(data);
+                var arrUser;
+                var listUser = document.getElementById('loopCheckBox');
+                var html = '';
 
-                var trHTML = '';
+                if (departmentId === 'all') {
+                    arrUser = Object.values(data.users);
+                }
+                else {
+                    arrUser = data.department.users;
+                }
 
+                $('#loopCheckBox').addClass('form-control col-12 d-flex flex-wrap h-auto mb-3');
+                if (arrUser.length === 0) {
+                    html += '<div class="col-12">' +
+                        '<span>---No data to display---</span>' +
+                        '</div>';
+                }
 
-                    $.each(data.project.users, function (i, user) {
-                        trHTML += '<tr>' +
-                            '<td>' + data.project.name + '</td>' +
-                            '<td>' + user.name + '</td>' +
-                            '<td> <button class="btn btn-danger ml-2 deleteUser" value=""> Delete</button></td>' +
+                for (var i = 0; i < arrUser.length; i++) {
+                    html += '<div class="col-3">' +
+                        '<input type="checkbox" value=" ' + arrUser[i].id + ' " ' + 'id="checkBoxUserId" name="checkBoxUserId[]" ' + '>' + '' + arrUser[i].name +
+                        '</div>';
+                }
 
-                            '</tr>';
-                                                  });
-
-            $('#tableEdit').append(trHTML);
-
+                listUser.innerHTML = html;
+            },
+            error: function (e) {
+                console.log('error:' + e);
             }
         });
+    });
 
-        $('#editProjectModal').modal('show');
+    $('#inputProjectAssign').on('change', function () {
+        $('#tableAssign tbody').empty();
+        $('#inputSelectUser').empty();
+        var projectId = $('#inputProjectAssign').val();
+        $.ajax({
+            headers:
+                {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+            type: "GET",
+            url: baseUrl + '/hapo-intern/admin/ajax/getProjectById/' + projectId,
+            success: function (data) {
+                console.log(data);
+                var htmlTable = '';
+                var htmlSelect = '';
+                var arrUsers = data.project.users;
+
+                $.each(arrUsers, function (i, user) {
+                    htmlTable += '<tr>' +
+                        '<td>' + data.project.date_start + '</td>' +
+                        '<td>' + data.project.date_finish + '</td>' +
+                        '<td>' + user.name + '</td>' +
+                        '<td>' + user.pivot.date_start + '</td>' +
+                        '<td>' + user.pivot.date_finish + '</td>' +
+                        '<td><button class="btn btn-outline-danger" value="'+user.id + '"> <i class="fa fa-fw fa-trash"></i></button></td>' +
+                        '</tr>';
+                    htmlSelect += '<option value="' + user.id + '"> ' + user.name + '</option>';
+                });
+
+                $('#tableAssign').append(htmlTable);
+                $('#inputSelectUser').append(htmlSelect);
+            },
+            error: function (e) {
+                console.log('error:' + e);
+            }
+        });
+    });
+
+    $('#btnAssign').on('click', function (e) {
+        e.preventDefault();
+        var formData = new FormData($('form#formAssign')[0]);
+        var url =   $('#formAssign').attr('action');
+
+        $.ajax({
+            headers:
+                {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+            type: "POST",
+            url: url,
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (e) {
+                console.log('error:' + e);
+            }
+        });
 
 
     });

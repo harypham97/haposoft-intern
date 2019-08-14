@@ -18,9 +18,17 @@
             <ul class="collapse list-unstyled list-group list-group-flush dropdown-content " id="manageProject">
                 <a href="{{route('projects.index')}}" class="py-2 pl-5 text-decoration-none">Projects</a>
                 <a href="{{route('project_user.index')}}" class="py-2 pl-5 text-decoration-none">Project-User</a>
-                <a href="#" class="py-2 pl-5 text-decoration-none">Assign</a>
+                <a href="{{{route('project_user.showListAssign')}}}" class="py-2 pl-5 text-decoration-none">Assign</a>
             </ul>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Report</a>
+        <a href="#manageTask" class="list-group-item list-group-item-action bg-light"
+           data-toggle="collapse" aria-expanded="false">
+            Manage Tasks
+            <i class="fa fa-angle-down pull-right"></i>
+        </a>
+            <ul class="collapse list-unstyled list-group list-group-flush dropdown-content " id="manageTask">
+                <a href="#" class="py-2 pl-5 text-decoration-none">Tasks</a>
+                <a href="#" class="py-2 pl-5 text-decoration-none">Reports</a>
+            </ul>
         <a href="#" class="list-group-item list-group-item-action bg-light">OverView</a>
     </div>
 </div>

@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\StaffRequest;
-use App\Model\Department;
-use Illuminate\Http\Request;
+use App\Models\Department;
 use App\Http\Controllers\Controller;
-use App\Model\User;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
@@ -18,7 +17,7 @@ class StaffController extends Controller
      */
     public function index()
     {
-        $users = User::orderBy('id', 'desc')->paginate(User::NUMBER_PER_PAGE);
+        $users = User::orderBy('id', 'desc')->paginate(config('variables.number_per_page'));
         $data = ['data' => $users];
         return view('admin.staffs.index', $data);
 
@@ -50,7 +49,7 @@ class StaffController extends Controller
             $path = $request->avatar->store('images', ['disk' => 'public']);
             $input['avatar'] = $path;
         }
-        $input['password'] = \Hash::make($request->get('password'));
+        $input['password'] = \Hash::make($request->password);
         $input['role_id'] = User::ROLE_USER;
         User::create($input);
         return redirect('/admin/staffs')->with('message', __('messages.staff_create'));
@@ -65,8 +64,8 @@ class StaffController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        $dept_name = User::find($id)->department()->firstOrFail()->name;
-        $user['dept_name'] = $dept_name;
+        $deptName = User::find($id)->department()->firstOrFail()->name;
+        $user['dept_name'] = $deptName;
         return response()->json($user);
     }
 
@@ -80,8 +79,11 @@ class StaffController extends Controller
     {
         $user = User::findOrFail($id);
         $departments = Department::all()->sortBy('name');
-        $data = ['user' => $user, 'departments' => $departments];
-        return view('admin.staffs.edit', compact('data'));
+        $data = [
+            'user' => $user,
+            'departments' => $departments
+        ];
+        return view('admin.staffs.edit', $data);
     }
 
     /**

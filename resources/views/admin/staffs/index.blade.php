@@ -4,10 +4,10 @@
 @section('content')
     <div class="container-fluid">
         <form method="GET" action="{{route('staffs.create')}}">
-            <button class="btn btn-primary mt-3 mb-3" style="cursor:pointer"> Add new staff</button>
+            <button class="btn btn-primary mt-3 mb-3"> Add new staff</button>
         </form>
         @if (Session::has('message'))
-            <p style="color: red">{{ Session::get('message') }}</p>
+            <p class="text-danger">{{ Session::get('message') }}</p>
         @endif
         <table class="table table-bordered table-hover">
             <thead>
