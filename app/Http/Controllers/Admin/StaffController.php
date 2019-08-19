@@ -52,7 +52,7 @@ class StaffController extends Controller
         $input['password'] = \Hash::make($request->password);
         $input['role_id'] = User::ROLE_USER;
         User::create($input);
-        return redirect('/admin/staffs')->with('message', __('messages.staff_create'));
+        return redirect()->route('staffs.index')->with('message', __('messages.staff_create'));
     }
 
     /**
@@ -64,7 +64,7 @@ class StaffController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        $deptName = User::find($id)->department()->firstOrFail()->name;
+        $deptName = User::find($id)->department()->name;
         $user['dept_name'] = $deptName;
         return response()->json($user);
     }
@@ -105,7 +105,7 @@ class StaffController extends Controller
             $input['avatar'] = $path;
         }
         $user->update($input);
-        return redirect('/admin/staffs')->with('message', __('messages.staff_update'));
+        return redirect()->route('staffs.index')->with('message', __('messages.staff_update'));
     }
 
     /**
@@ -117,6 +117,6 @@ class StaffController extends Controller
     public function destroy($id)
     {
         User::findOrFail($id)->delete();
-        return redirect('/admin/staffs')->with('message', __('messages.staff_destroy'));
+        return redirect()->route('staffs.index')->with('message', __('messages.staff_destroy'));
     }
 }

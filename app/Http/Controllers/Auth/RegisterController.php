@@ -69,7 +69,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'department_id' => '1',
-            'role_id' => \Config('auth.role_user')
+            'role_id' => \Config('auth.role_user.staff')
         ]);
     }
 }

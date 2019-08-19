@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\ProjectResquest;
+use App\Http\Requests\ProjectRequest;
 use App\Models\Customer;
 use App\Models\Project;
 use App\Http\Controllers\Controller;
@@ -39,10 +39,10 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ProjectResquest $request)
+    public function store(ProjectRequest $request)
     {
         Project::create($request->all());
-        return redirect('/admin/projects')->with('message', __('messages.project_create'));
+        return redirect()->route('projects.index')->with('message', __('messages.project_create'));
     }
 
     /**
@@ -56,15 +56,12 @@ class ProjectController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+    /***
+     * @param Project $project
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($id)
+    public function edit(Project $project)
     {
-        $project = Project::findOrFail($id);
         $customers = Customer::all()->sortBy('name');
         $data = [
             'project' => $project,
@@ -73,18 +70,16 @@ class ProjectController extends Controller
         return view('admin.projects.edit', $data);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+    /***
+     * @param ProjectRequest $request
+     * @param Project $project
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(ProjectResquest $request, $id)
+
+    public function update(ProjectRequest $request, Project $project)
     {
-        $project = Project::findOrFail($id);
         $project->update($request->all());
-        return redirect('/admin/projects')->with('message', __('messages.project_update'));
+        return redirect()->route('projects.index')->with('message', __('messages.project_update'));
     }
 
     /**
@@ -96,7 +91,7 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         Project::findOrFail($id)->delete();
-        return redirect('/admin/projects')->with('message', __('messages.project_destroy'));
+        return redirect('projects.index')->with('message', __('messages.project_destroy'));
     }
 
 }

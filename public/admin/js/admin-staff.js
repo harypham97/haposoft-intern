@@ -1,12 +1,15 @@
 $(document).ready(function () {
+    $.ajaxSetup({
+        headers:
+            {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+    });
+
     $('.btnInfoModal').on('click', function () {
         var id = $(this).attr('id');
 
         $.ajax({
-            headers:
-                {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
             type: "GET",
             url: "/hapo-intern/admin/staffs/" + id,
             success: function (data) {

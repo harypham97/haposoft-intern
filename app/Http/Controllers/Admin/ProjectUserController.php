@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\ProjectUserResquest;
+use App\Http\Requests\ProjectUserRequest;
 use App\Models\Department;
 use App\Models\Project;
 use App\Models\User;
@@ -53,7 +53,7 @@ class ProjectUserController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ProjectUserResquest $request)
+    public function store(ProjectUserRequest $request)
     {
         $listUsers = Project::findOrFail($request->get('project_id'))->users()->get();
         $arrCompare = [];
