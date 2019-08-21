@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Client;
 
 use App\Models\Project;
 use App\Models\Report;
-use App\Models\Task;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
-use Carbon\Carbon;
 
 class StaffController extends Controller
 {
@@ -23,40 +21,48 @@ class StaffController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function storeReport(Request $request)
     {
+        $arr_tasks = $request->checkBoxTaskId;
+        $query = [];
         $input_report = [
             'user_id' => Auth::id(),
             'name' => $request->name,
             'description' => $request->description,
         ];
-        $date_start = Carbon::now()->toDateTimeString();
         $report = Report::create($input_report);
-        $report->tasks()->attach($request->task_id, [
-            'date_start' => $date_start,
-            'date_finish' => Carbon::parse($date_start)->addHours($request->hour),
-        ]);
+
+        for ($i = 0; $i < sizeof($arr_tasks); $i++) {
+            $query[] = [
+                'task_id' => $arr_tasks[$i],
+                'date' => $request->date,
+                'time_start' => $request->time_start,
+                'time_end' => $request->time_end,
+            ];
+        }
+        $report->tasks()->attach($query);
         $data = [
-            'message' => 'bla bla',
+            'message' => 'report saved',
             'success' => true,
+            'report_id' => $report->id,
         ];
         return response()->json($data);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($id)
+    public function editReport($id)
     {
-        //
+        $report_tasks = Report::with('tasks')->findOrFail($id);
+        $data = [
+            'report_tasks' => $report_tasks,
+        ];
+        return view('client.staffs.reports.edit', $data);
     }
 
     /**
@@ -66,44 +72,97 @@ class StaffController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function updateReport(Request $request, $id)
     {
-        //
+        $report = Report::findOrFail($id);
+        $report->update($request->all());
+        $arr_id_task = $report->tasks()->get()
+            ->pluck('id')
+            ->toArray();
+        for ($i = 0; $i < sizeof($arr_id_task); $i++) {
+            $report->tasks()->updateExistingPivot($arr_id_task[$i], [
+                'date' => $request->date,
+                'time_start' => $request->time_start,
+                'time_end' => $request->time_end,
+            ]);
+        }
+        return view('client.staffs.reports.index');
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function destroy($id)
-    {
-        //
-    }
-
-    public function showReport()
+    public function createReport()
     {
         $projects = Auth::user()->projects()->pluck('name', 'project_id');
         $data = [
             'projects' => $projects,
         ];
-        return view('client.staffs.reports.index', $data);
+        return view('client.staffs.reports.create', $data);
     }
 
-    public function getReportTaskByProject($projectId)
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function showReport()
     {
-        $project = Project::select('id', 'name')->findOrFail($projectId);
-        $task_report = Task::with(['reports' => function ($query) {
-            $query->select('report_id', 'reports.name', 'reports.created_at')->whereDate('reports.created_at', Carbon::today()->toDateString());
-        }])->where('project_id', $projectId)
-            ->select('id', 'name')
+        return view('client.staffs.reports.index');
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroyReport($id)
+    {
+        $report = Report::findOrFail($id);
+        $report->tasks()->detach();
+        $report->delete();
+        $data = [
+            'message' => 'report deleted',
+            'success' => true,
+        ];
+        return response()->json($data);
+    }
+
+    /**
+     * @param $projectId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTasksByProject($projectId)
+    {
+        if (is_numeric($projectId)) {
+            $project = Project::select('id', 'name')->findOrFail($projectId);
+            $tasks = $project->tasks()->get();
+            $data = [
+                'message' => 'get info report, tasks by project',
+                'success' => true,
+                'project' => $project,
+                'tasks' => $tasks,
+            ];
+        } else {
+            $data = [
+                'message' => 'error get info report',
+                'success' => false,
+            ];
+        }
+        return response()->json($data);
+    }
+
+    /**
+     * @param $fromDate
+     * @param $toDate
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function searchReportByDate($fromDate, $toDate)
+    {
+        $reports = Auth::user()->reports()
+            ->whereBetween('created_at', [$fromDate, $toDate])
             ->get();
         $data = [
-            'message' => 'bla bla',
+            'message' => 'report search successful',
             'success' => true,
-            'project' => $project,
-            'task_report' => $task_report,
+            'reports' => $reports,
         ];
         return response()->json($data);
     }

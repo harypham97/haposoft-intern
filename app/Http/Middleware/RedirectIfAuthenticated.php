@@ -17,16 +17,22 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($guard == "admin" && Auth::guard($guard)->check()) {
-            return redirect('/admin');
-        }
-//        if ($guard == "writer" && Auth::guard($guard)->check()) {
-//            return redirect('/writer');
-//        }
-        if (Auth::guard($guard)->check()) {
-            return redirect('/home');
-        }
-
+       switch ($guard){
+           case 'admin':
+               if(Auth::guard($guard)->check()){
+                   return redirect()->route('admin.dashboard');
+               }
+               break;
+           case 'customer':
+               if(Auth::guard($guard)->check()){
+                   return redirect()->route('client.customers.index');
+               }
+               break;
+           default:
+               if(Auth::guard($guard)->check()){
+                   return redirect()->route('client.staffs.index');
+               }
+       }
         return $next($request);
     }
 }

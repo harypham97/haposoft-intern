@@ -8,50 +8,34 @@ $(document).ready(function () {
     });
 
     $('#inputProjectReport').on('change', function () {
-        $('#tableReport tbody').empty();
-        $('#inputSelectTask').empty();
         var projectId = $('#inputProjectReport').val();
-        $('#inputSelectTask').empty();
         $.ajax({
             type: "GET",
-            url: baseUrl + '/hapo-intern/client/ajax/get-report-task-by-project/' + projectId,
+            url: baseUrl + '/hapo-intern/client/ajax/get-tasks-by-project/' + projectId,
             success: function (data) {
-                var htmlSelect = '';
-                var htmlTable = '';
-                $.each(data.task_report, function (i, task) {
-                    htmlSelect += `<option value="${task.id}">${task.name}</option>`;
-
-                    $.each(task.reports, function (i, report) {
-                        htmlTable +=
-                            `<tr>
-                                <td>${report.name}</td>
-                                <td>${task.name}</td>
-                                <td>${data.project.name}</td>    
-                                <td>${report.created_at}</td>
-                                <td>
-                                    <button class="btn btn-outline-danger" value="${report.report_id}"> <i class="fa fa-fw fa-trash"></i></button>
-                                </td>                       
-                             </tr>`;
+                var htmlCheckBox = '';
+                if (data.success === true) {
+                    $.each(data.tasks, function (i, task) {
+                        htmlCheckBox += `<div class="col-3"> <input type="checkbox" value="${task.id}"  name="checkBoxTaskId[]">${task.name}</div>`;
                     });
-
-                });
-                $('#inputSelectTask').append(htmlSelect);
-                $('#tableReport').append(htmlTable);
+                } else {
+                    htmlCheckBox += `<div class="col-12"> <span>---No data to display---</span></div>`;
+                }
+                $('#loopCheckBoxTask').html(htmlCheckBox);
             },
             error: function (e) {
             }
         });
-
     });
 
-    $('#createReport').on('click', function (e) {
+    $('#btnCreateReport').on('click', function (e) {
         e.preventDefault();
         var formData = new FormData($('form#formCreateReport')[0]);
         var url = $('#formCreateReport').attr('action');
-
         var project_name = $('#inputProjectReport :selected').text();
-        var task_name = $('#inputSelectTask :selected').text();
         var report_name = formData.get('name');
+        var date = formData.get('date');
+        var time = `${formData.get('time_start')} ~ ${formData.get('time_end')}`;
         $.ajax({
             type: "POST",
             url: url,
@@ -59,20 +43,84 @@ $(document).ready(function () {
             contentType: false,
             data: formData,
             success: function (data) {
-                alert('report saved!!!')
-                $('#tableReport').append(
+                alert('report saved!!!');
+                $('#tableCreateReport').append(
                     `<tr>
                          <td>${report_name}</td>
-                         <td>${task_name}</td>
                          <td>${project_name}</td>
-                         <td></td>
+                         <td>${date}</td>
+                         <td>${time}</td>
+                         <td>${getCurrentTime()}</td>
                          <td>
-                             <button class="btn btn-outline-danger" value=""> <i class="fa fa-fw fa-trash"></i></button>
+                             <button class="btn btn-outline-danger deleteReport" value="${data.report_id}" title="Delete"> <i class="fa fa-fw fa-trash"></i></button>
                          </td>
                       </tr>`);
             },
             error: function (e) {
-                console.log(e);
+            }
+        });
+    });
+
+    function getCurrentTime() {
+        var date = new Date();
+        var curr_date = (date.getDate() < 10 ? '0' : '') + date.getDate();
+        var curr_month = ((date.getMonth() + 1) < 10 ? '0' : '') + (date.getMonth() + 1);
+        return `${date.getFullYear()}-${curr_month}-${curr_date} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    }
+
+    $('#tableCreateReport tbody').on('click', '.deleteReport', function () {
+        if (confirm("Delete this report?")) {
+            var reportId = $(this).attr('value');
+            var node = this;
+            $.ajax({
+                type: 'DELETE',
+                url: baseUrl + '/hapo-intern/client/ajax/delete-staff-report/' + reportId,
+                success: function (data) {
+                    if (data.success === true) {
+                        $(node).closest("tr").remove();
+                        $('#formCreateReport').trigger("reset");
+                    }
+                    else {
+                        alert('something wrong, try again later!')
+                    }
+                },
+                error: function (e) {
+                }
+            });
+        }
+    });
+
+    $('#btnSearchReport').on('click', function (e) {
+        e.preventDefault();
+        $('#tableReportSearch tbody').empty();
+        var fromDate = $('#from_date').val();
+        var toDate = $('#to_date').val();
+        $.ajax({
+            type: "GET",
+            url: `${baseUrl}/hapo-intern/client/ajax/search-report-by-date/${fromDate}/${toDate}`,
+            success: function (data) {
+                var html = '';
+                if (data.reports.length > 0) {
+                    $.each(data.reports, function (i, report) {
+                        var href = `${baseUrl}/hapo-intern/staffs/reports/${report.id}/edit`;
+                        html += `<tr>
+                                <td>${i + 1}</td>
+                                <td>${report.name}</td>
+                                <td>${report.created_at}</td>
+                                <td>
+                                    <a class="btn btn-outline-info" href="${href}" title="Info">
+                                        <i class="fa fa-info-circle"></i>
+                                    </a>
+                                </td>
+                              </tr>`;
+                    });
+                } else {
+                    html += `<tr><td colspan="4" class="text-center">---No data to display---</td></tr>`;
+                }
+
+                $('#tableReportSearch').append(html);
+            },
+            error: function (e) {
             }
         });
     });
