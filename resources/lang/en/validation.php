@@ -143,6 +143,13 @@ return [
             'image' => 'Upload an image file, ex: jpeg, png...'
         ],
 
+        'customer_id' => [
+            'numeric' => 'Don\'t forget to choose your customer!'
+        ],
+        'checkBoxUserId' => [
+            'required' => 'Don\'t forger to choose staffs for project!'
+        ]
+
     ],
 
     /*
@@ -157,12 +164,11 @@ return [
     */
 
     'attributes' => [
-        'email' => 'staff\'s email',
-        'name' => 'staff\'s name',
         'dob' => 'date of birth',
         'phone' => 'phone number',
         'department_id' => 'department\'s name',
-        'avatar' => 'staff\'s avatar',
+        'customer_id' => 'customer\'s name',
+        'project_id' => 'project\'name'
     ],
 
 ];

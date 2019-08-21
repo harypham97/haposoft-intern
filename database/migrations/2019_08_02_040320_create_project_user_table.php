@@ -17,8 +17,8 @@ class CreateProjectUserTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('project_id')->unsigned();
-            $table->date('date_start');
-            $table->date('date_finish');
+            $table->date('date_start')->nullable();
+            $table->date('date_finish')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

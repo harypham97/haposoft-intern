@@ -45,7 +45,7 @@ class StaffRequest extends FormRequest
             case 'PUT':
                 {
                     return [
-                        'email' => 'required|email|max:255|unique:users,email,'.$this->route('staff'),
+                        'email' => 'required|email|max:255|unique:users,email,' . $this->route('staff'),
                         'name' => 'required|max:50',
                         'dob' => 'required|date',
                         'phone' => 'required|numeric|digits_between:10,15',

@@ -36,10 +36,10 @@ return [
     */
 
     'guards' => [
-        'user' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+//        'user' => [
+//            'driver' => 'session',
+//            'provider' => 'users',
+//        ],
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
@@ -51,8 +51,13 @@ return [
         ],
         'admin' => [
             'driver' => 'session',
-            'provider' => 'admins'
+            'provider' => 'admins',
         ],
+        'customer' => [
+            'driver' => 'session',
+            'provider' => 'customers',
+        ],
+
     ],
 
     /*
@@ -75,13 +80,19 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Model\User::class,
+            'model' => App\Models\User::class,
         ],
 
         'admins' => [
             'driver' => 'eloquent',
-            'model' => App\Model\Admin::class,
+            'model' => App\Models\Admin::class,
         ],
+
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Customer::class,
+        ],
+
     ],
 
     /*
@@ -110,10 +121,16 @@ return [
             'table' => 'password_resets',
             'expire' => 60,
         ],
+        'customers' => [
+            'provider' => 'admin',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+
     ],
-
-    'role_user' => '1',
-    'role_customer' => '2',
-    'role_admin' => '3',
-
+    'role_user' => [
+        'staff' => 1,
+        'leader' => 2,
+        'project_manager' => 3,
+    ],
 ];

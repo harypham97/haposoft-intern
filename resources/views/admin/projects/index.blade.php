@@ -4,18 +4,20 @@
 @section('content')
     <div class="container-fluid">
         <form method="GET" action="{{route('projects.create')}}">
-            <button class="btn btn-primary mt-3 mb-3" style="cursor:pointer"> Add new project</button>
+            <button class="btn btn-primary mt-3 mb-3"> Add new project</button>
         </form>
+        @if (Session::has('message'))
+            <p class="text-danger">{{ Session::get('message') }}</p>
+        @endif
         <table class="table table-bordered table-hover">
             <thead>
             <tr>
                 <th>ID</th>
                 <th>Project name</th>
                 <th>Customer</th>
-                <th>Users</th>
                 <th>Date start</th>
                 <th>Date finish</th>
-                <th>Action</th>
+                <th class="w-25">Action</th>
             </tr>
             </thead>
             <tbody>
@@ -24,17 +26,16 @@
                     <td>{{$project->id}}</td>
                     <td>{{$project->name}}</td>
                     <td>{{$project->customer->name}}</td>
-                    <td>
-                        @foreach($project->users as $user)
-                            {{$user->name . '&&'}}
-                        @endforeach
-                    </td>
                     <td>{{$project->date_start}}</td>
                     <td>{{$project->date_finish}}</td>
                     <td class="d-flex">
                         <button class="btn btn-outline-primary btnInfoModal" id="{{$project->id}}" title="Edit">
                             <i class="fa fa-fw fa-search"></i>
                         </button>
+                        <a class="btn btn-outline-warning ml-3 mr-3" id="{{$project->id}}" title="Edit"
+                           href="{{route('projects.edit',$project->id)}}">
+                            <i class="fa fa-fw fa-edit"></i>
+                        </a>
                         <form method="POST" action="{{ route('projects.destroy', [$project->id]) }}">
                             {{ csrf_field() }}
                             {{ method_field('DELETE') }}

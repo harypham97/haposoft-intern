@@ -111,3 +111,10 @@ storage/debugbar/
  .idea/hapo-intern.iml
  .idea/php.xml
 
+/public/css/app.css
+/public/js/app.js
+/public/mix-manifest.json
+
+
+
+

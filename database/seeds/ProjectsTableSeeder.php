@@ -19,12 +19,12 @@ class ProjectsTableSeeder extends Seeder
      */
     public function run()
     {
-        $users = App\Model\User::all();
-        factory(App\Model\Project::class, 30)->create()
+        $users = App\Models\User::all();
+        factory(App\Models\Project::class, 10)->create()
             ->each(function ($project) use ($users) {
                 $project->users()->attach(
                     $users->random()->id,
-                    ['project_id' => $this->faker->numberBetween(1, 30), 'date_start' => now(), 'date_finish' => now()]);
+                    ['project_id' => $this->faker->numberBetween(1, 10), 'date_start' => now(), 'date_finish' => now()]);
             });
     }
 }

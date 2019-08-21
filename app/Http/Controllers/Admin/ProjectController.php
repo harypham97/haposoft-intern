@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Model\Customer;
-use App\Model\Project;
-use App\Model\User;
-use Illuminate\Http\Request;
+use App\Http\Requests\ProjectRequest;
+use App\Models\Customer;
+use App\Models\Project;
 use App\Http\Controllers\Controller;
 
 class ProjectController extends Controller
@@ -17,7 +16,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::with(['customer','users'])->paginate(Project::NUMBER_PER_PAGE);
+        $projects = Project::with(['customer', 'users'])->orderByDesc('id')->paginate(config('variables.number_per_page'));
         $data = ['data' => $projects];
         return view('admin.projects.index', $data);
     }
@@ -29,7 +28,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        $customers = Customer::all();
+        $customers = Customer::all()->sortBy('name');
         $data = ['data' => $customers];
         return view('admin.projects.create', $data);
     }
@@ -40,10 +39,10 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProjectRequest $request)
     {
         Project::create($request->all());
-        return redirect('/admin/projects')->with('message', __('messages.user_create'));
+        return redirect()->route('projects.index')->with('message', __('messages.project_create'));
     }
 
     /**
@@ -57,27 +56,30 @@ class ProjectController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+    /***
+     * @param Project $project
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($id)
+    public function edit(Project $project)
     {
-        //
+        $customers = Customer::all()->sortBy('name');
+        $data = [
+            'project' => $project,
+            'customers' => $customers
+        ];
+        return view('admin.projects.edit', $data);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+    /***
+     * @param ProjectRequest $request
+     * @param Project $project
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+
+    public function update(ProjectRequest $request, Project $project)
     {
-        //
+        $project->update($request->all());
+        return redirect()->route('projects.index')->with('message', __('messages.project_update'));
     }
 
     /**
@@ -89,7 +91,7 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         Project::findOrFail($id)->delete();
-        return redirect('/admin/projects')->with('message', __('messages.user_destroy'));
+        return redirect('projects.index')->with('message', __('messages.project_destroy'));
     }
 
 }

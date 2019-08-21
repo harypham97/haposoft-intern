@@ -2,5 +2,5 @@
 @section('title', 'Edit project')
 @section('name_feature', 'Edit project')
 @section('content')
-    <h1>asdfsadfsdf</h1>
+    <h1>doing...</h1>
 @endsection

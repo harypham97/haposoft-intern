@@ -5,7 +5,7 @@
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
-$factory->define(App\Model\Customer::class, function (Faker $faker) {
+$factory->define(App\Models\Customer::class, function (Faker $faker) {
     return [
         'email' => $faker->unique()->safeEmail,
         'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm',// secret
@@ -14,7 +14,7 @@ $factory->define(App\Model\Customer::class, function (Faker $faker) {
         'company' => $faker->company,
         'avatar' => Str::random(10),
         'phone' => $faker->phoneNumber,
-        'role_id' => \Config('auth.role_customer'),
+        'role_id' => 1,
         'created_at' => now()
     ];
 });

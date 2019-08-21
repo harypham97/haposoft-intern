@@ -5,6 +5,8 @@
 <script src="{{asset('public/admin/js/bootstrap.bundle.min.js')}}"></script>
 <script src="{{asset('public/admin/js/admin-staff.js')}}"></script>
 <script src="{{asset('public/admin/js/admin-project-user.js')}}"></script>
+<script src="{{asset('public/admin/js/admin-task.js')}}"></script>
+
 
 <!-- Menu Toggle Script -->
 <script>
