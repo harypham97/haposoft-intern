@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jvgiv
- * Date: 8/1/2019
- * Time: 3:32 PM
- */
 
 namespace App\Models;
 
@@ -19,10 +13,6 @@ use App\Notifications\MailResetPasswordNotification;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
-    const ROLE_USER = 1;
-    const ROLE_CUSTOMER = 2;
-    const ROLE_ADMIN = 3;
-
     use SoftDeletes, Authenticatable, CanResetPassword, Notifiable;
 
     protected $table = 'users';
@@ -49,7 +39,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function projects()
     {
-        return $this->belongsToMany(Project::class)->withPivot('date_start','date_finish');
+        return $this->belongsToMany(Project::class)->withPivot('date_start', 'date_finish');
     }
 
     public function tasks()

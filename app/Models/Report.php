@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jvgiv
- * Date: 8/1/2019
- * Time: 3:34 PM
- */
 
 namespace App\Models;
-
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,7 +10,9 @@ class Report extends Model
     use SoftDeletes;
     protected $table = 'reports';
     protected $dates = ['deleted_at'];
-    protected $fillable = ['id', 'name', 'description', 'user_id'];
+    protected $fillable = [
+        'id', 'name', 'description', 'user_id',
+    ];
 
     public function user()
     {
@@ -26,6 +21,6 @@ class Report extends Model
 
     public function tasks()
     {
-        return $this->belongsToMany(Task::class);
+        return $this->belongsToMany(Task::class)->withPivot('date','time_start','time_end')->withTimestamps();
     }
 }

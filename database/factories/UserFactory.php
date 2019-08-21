@@ -5,7 +5,7 @@
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
-$factory->define(App\Model\User::class, function (Faker $faker) {
+$factory->define(App\Models\User::class, function (Faker $faker) {
     return [
         'email' => $faker->unique()->safeEmail,
         'email_verified_at' => now(),
@@ -17,7 +17,7 @@ $factory->define(App\Model\User::class, function (Faker $faker) {
         'phone' => $faker->phoneNumber,
         'avatar' => Str::random(10),
         'description' => $faker->text,
-        'role_id' => \Config('auth.role_user'),
+        'role_id' => \Config('auth.role_user.staff'),
         'department_id' => $faker->numberBetween(1,10),
         'created_at' => now()
     ];

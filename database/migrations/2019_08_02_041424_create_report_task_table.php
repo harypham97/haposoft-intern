@@ -17,9 +17,9 @@ class CreateReportTaskTable extends Migration
             $table->increments('id');
             $table->integer('task_id')->unsigned();
             $table->integer('report_id')->unsigned();
-            $table->string('name')->nullable();
-            $table->text('description');
-            $table->date('time');
+            $table->date('date');
+            $table->time('time_start');
+            $table->time('time_end');
             $table->timestamps();
             $table->softDeletes();
         });

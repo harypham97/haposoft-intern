@@ -7,7 +7,7 @@
             <p class="text-danger">{{ Session::get('message') }}</p>
         @endif
         <div class="container">
-            <form id="formAssign" action="{{route('project_user.assignUser')}}">
+            <form id="formAssign" action="{{route('project_user.assign_user')}}">
                 <div class="form-group col-md-6 mt-3">
                     <label for="inputProject">Choose project:</label>
                     <select id="inputProjectAssign" class="form-control" name="project_id">

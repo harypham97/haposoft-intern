@@ -19,12 +19,12 @@ class ReportsTableSeeder extends Seeder
      */
     public function run()
     {
-        $tasks = App\Model\Task::all();
-        factory(App\Model\Report::class, 20)->create()
+        $tasks = App\Models\Task::all();
+        factory(App\Models\Report::class, 10)->create()
             ->each(function ($report) use ($tasks) {
                 $report->tasks()->attach(
                     $tasks->random()->id,
-                    ['report_id' => $this->faker->numberBetween(1, 20), 'name' => $this->faker->name, 'description' => $this->faker->text, 'time' => now()]);
+                    ['report_id' => $this->faker->numberBetween(1, 10)]);
             });
     }
 }

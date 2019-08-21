@@ -4,7 +4,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="container mt-3">
-            <form method="POST" action="{{route('staffs.update',$user->id)}}" enctype="multipart/form-data">
+            <form method="POST" action="{{route('staffs.update',[$user->id])}}" enctype="multipart/form-data">
                 {{ csrf_field() }}
                 {{ method_field('PUT')}}
                 <div class="form-row">

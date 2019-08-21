@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jvgiv
- * Date: 8/4/2019
- * Time: 7:06 AM
- */
 
 namespace App\Models;
 
@@ -16,7 +10,9 @@ class Department extends Model
     use SoftDeletes;
     protected $table = 'departments';
     protected $dates = ['deleted_at'];
-    protected $fillable = ['id', 'name'];
+    protected $fillable = [
+        'id', 'name'
+    ];
 
     public function users()
     {
