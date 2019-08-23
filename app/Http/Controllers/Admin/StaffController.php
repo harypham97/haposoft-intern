@@ -50,7 +50,7 @@ class StaffController extends Controller
             $input['avatar'] = $path;
         }
         $input['password'] = \Hash::make($request->password);
-        $input['role_id'] = User::ROLE_USER;
+        $input['role_id'] = config('auth.role_user.staff');
         User::create($input);
         return redirect()->route('staffs.index')->with('message', __('messages.staff_create'));
     }
