@@ -34,7 +34,6 @@ Route::namespace('Admin')->group(function () {
         Route::resource('project_user', 'ProjectUserController');
         Route::resource('tasks', 'TaskController');
         Route::resource('reports', 'ReportController');
-
     });
     Route::prefix('admin/ajax')->group(function () {
         Route::get('/get-user-by-department/{departmentId}', 'ProjectUserController@getUserByDepartment');
@@ -44,16 +43,20 @@ Route::namespace('Admin')->group(function () {
     });
 });
 Route::namespace('Client')->group(function () {
+    Route::prefix('client/ajax')->group(function () {
+        Route::post('/store-staff-report', 'StaffController@storeReport')->name('client.staffs.store_report');
+        Route::get('/get-tasks-by-project/{projectId}', 'StaffController@getTasksByProject')->name('client.staffs.get_tasks_by_project');
+        Route::delete('/delete-staff-report/{reportId}', 'StaffController@destroyReport')->name('client.staffs.delete_report');
+        Route::get('/search-report-by-date/{fromDate}/{toDate}', 'StaffController@searchReportByDate')->name('client.staffs.search_report_by_date');
+    });
     Route::prefix('staffs')->middleware('auth')->group(function () {
         Route::get('', 'StaffController@index')->name('client.staffs.index');
         Route::get('reports', 'StaffController@showReport')->name('client.staffs.show_report');
+        Route::get('reports/create', 'StaffController@createReport')->name('client.staffs.create_report');
+        Route::get('reports/{id}/edit', 'StaffController@editReport')->name('client.staffs.edit_report');
+        Route::put('reports/{id}', 'StaffController@updateReport')->name('client.staffs.update_report');
     });
     Route::prefix('customers')->middleware('auth:customer')->group(function () {
         Route::get('', 'CustomerController@index')->name('client.customers.index');
-    });
-    Route::prefix('client/ajax')->group(function () {
-        Route::post('/store-staff-report', 'StaffController@storeReport')->name('client.staffs.store_report');
-        Route::get('/get-report-task-by-project/{projectId}', 'StaffController@getReportTaskByProject')->name('client.staffs.get_report_task');
-
     });
 });
