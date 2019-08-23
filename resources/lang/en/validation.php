@@ -148,7 +148,10 @@ return [
         ],
         'checkBoxUserId' => [
             'required' => 'Don\'t forger to choose staffs for project!'
-        ]
+        ],
+        'project_id' => [
+            'numeric' => 'Don\'t forget to choose your project!'
+        ],
 
     ],
 

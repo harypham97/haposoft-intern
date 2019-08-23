@@ -115,6 +115,7 @@ storage/debugbar/
 /public/js/app.js
 /public/mix-manifest.json
 
-
+package-lock.json
+package.json
 
 
