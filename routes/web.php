@@ -58,5 +58,6 @@ Route::namespace('Client')->group(function () {
     });
     Route::prefix('customers')->middleware('auth:customer')->group(function () {
         Route::get('', 'CustomerController@index')->name('client.customers.index');
+        Route::get('staffs','Customer\StaffController@index')->name('client.customers.staffs.index');
     });
 });
