@@ -1,6 +1,14 @@
 @extends('client.layouts.default')
+
+@auth('customer')
+@section('title', trans('view.titles.customer_index'))
+@section('name_feature', trans('view.titles.customer_index'))
+@endauth
+@auth('web')
 @section('title', trans('view.titles.staff_index'))
 @section('name_feature', trans('view.titles.staff_index'))
+@endauth
+
 @section('content')
     <div class="container-fluid">
         <h1 class="mt-4">Simple Sidebar</h1>

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Http\Requests\Client\Report\UpdateRequest;
+use App\Http\Requests\Client\Report\StoreRequest;
 use App\Models\Project;
 use App\Models\Report;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
 
@@ -21,35 +22,36 @@ class StaffController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param StoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function storeReport(Request $request)
+    public function storeReport(StoreRequest $request)
     {
-        $arr_tasks = $request->checkBoxTaskId;
-        $query = [];
+        $arr_tasks_id = $request->check_box_task_id;
+        $arr_report_tasks = [];
         $input_report = [
             'user_id' => Auth::id(),
             'name' => $request->name,
             'description' => $request->description,
         ];
         $report = Report::create($input_report);
-
-        for ($i = 0; $i < sizeof($arr_tasks); $i++) {
-            $query[] = [
-                'task_id' => $arr_tasks[$i],
+        for ($i = 0; $i < sizeof($arr_tasks_id); $i++) {
+            $arr_report_tasks[] = [
+                'task_id' => $arr_tasks_id[$i],
                 'date' => $request->date,
                 'time_start' => $request->time_start,
                 'time_end' => $request->time_end,
             ];
         }
-        $report->tasks()->attach($query);
+        $report->tasks()->attach($arr_report_tasks);
         $data = [
-            'message' => 'report saved',
-            'success' => true,
             'report_id' => $report->id,
         ];
-        return response()->json($data);
+        return response()->json([
+            'success' => true,
+            'message' => 'report saved',
+            'data' => $data
+        ]);
     }
 
     /**
@@ -66,13 +68,11 @@ class StaffController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateRequest $request
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function updateReport(Request $request, $id)
+    public function updateReport(UpdateRequest $request, $id)
     {
         $report = Report::findOrFail($id);
         $report->update($request->all());
@@ -118,11 +118,11 @@ class StaffController extends Controller
         $report = Report::findOrFail($id);
         $report->tasks()->detach();
         $report->delete();
-        $data = [
-            'message' => 'report deleted',
+        return response()->json([
             'success' => true,
-        ];
-        return response()->json($data);
+            'message' => 'report deleted',
+            'data' => '',
+        ]);
     }
 
     /**
@@ -135,18 +135,22 @@ class StaffController extends Controller
             $project = Project::select('id', 'name')->findOrFail($projectId);
             $tasks = $project->tasks()->get();
             $data = [
-                'message' => 'get info report, tasks by project',
-                'success' => true,
                 'project' => $project,
                 'tasks' => $tasks,
             ];
+            return response()->json([
+                'success' => true,
+                'message' => 'get info report, tasks by project',
+                'data' => $data
+            ]);
         } else {
-            $data = [
-                'message' => 'error get info report',
+            return response()->json([
                 'success' => false,
-            ];
+                'status' => 404,
+                'message' => 'error get info report',
+                'data' => ''
+            ]);
         }
-        return response()->json($data);
     }
 
     /**
@@ -160,10 +164,12 @@ class StaffController extends Controller
             ->whereBetween('created_at', [$fromDate, $toDate])
             ->get();
         $data = [
-            'message' => 'report search successful',
-            'success' => true,
             'reports' => $reports,
         ];
-        return response()->json($data);
+        return response()->json([
+            'message' => 'report search successful',
+            'success' => true,
+            'data' => $data
+        ]);
     }
 }

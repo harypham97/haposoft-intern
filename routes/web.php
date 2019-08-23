@@ -45,8 +45,8 @@ Route::namespace('Admin')->group(function () {
 Route::namespace('Client')->group(function () {
     Route::prefix('client/ajax')->group(function () {
         Route::post('/store-staff-report', 'StaffController@storeReport')->name('client.staffs.store_report');
-        Route::get('/get-tasks-by-project/{projectId}', 'StaffController@getTasksByProject');
-        Route::delete('/delete-staff-report/{reportId}', 'StaffController@destroyReport');
+        Route::get('/get-tasks-by-project/{projectId}', 'StaffController@getTasksByProject')->name('client.staffs.get_tasks_by_project');
+        Route::delete('/delete-staff-report/{reportId}', 'StaffController@destroyReport')->name('client.staffs.delete_report');
         Route::get('/search-report-by-date/{fromDate}/{toDate}', 'StaffController@searchReportByDate')->name('client.staffs.search_report_by_date');
     });
     Route::prefix('staffs')->middleware('auth')->group(function () {

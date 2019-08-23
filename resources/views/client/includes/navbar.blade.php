@@ -9,6 +9,9 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="#">Projects <span class="sr-only">(current)</span></a>
                 </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Staffs <span class="sr-only">(current)</span></a>
+                </li>
             @else
                 <li class="nav-item active">
                     <a class="nav-link" href="{{route('client.staffs.index')}}">Home <span class="sr-only">(current)</span></a>
