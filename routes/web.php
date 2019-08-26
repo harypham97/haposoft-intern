@@ -34,10 +34,12 @@ Route::namespace('Admin')->group(function () {
         Route::resource('project_user', 'ProjectUserController');
         Route::resource('tasks', 'TaskController');
         Route::resource('reports', 'ReportController');
+        Route::resource('customers','CustomerController');
     });
     Route::prefix('admin/ajax')->group(function () {
-        Route::get('/get-user-by-department/{departmentId}', 'ProjectUserController@getUserByDepartment');
-        Route::get('/get-project-by-id/{projectId}', 'ProjectUserController@getProjectById');
+        Route::get('/get-user-by-department/{departmentId}', 'ProjectUserController@getUserByDepartment')->name('project_user.get_user_by_department');
+        Route::get('/get-user-by-project/{projectId}', 'ProjectUserController@getUserByProject')->name('project_user.get_user_by_project');
+        Route::get('/get-project-assign-by-user/{projectId}/{userId}','ProjectUserController@getProjectAssignByUser')->name('project_user.get_project_assign_by_user');
         Route::post('/assign-user', 'ProjectUserController@assignUser')->name('project_user.assign_user');
         Route::get('/get-task-by-project-id/{projectId}', 'TaskController@getTaskByProjectId');
     });

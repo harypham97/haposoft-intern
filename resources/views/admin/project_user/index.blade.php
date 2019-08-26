@@ -25,6 +25,7 @@
                     </div>
                     <div class="form-group col-md-6 mt-3">
                         <label for="labelDepartment">Choose user's Department:</label>
+                        <input type="hidden" id="urlGetUserByDepartment" value="{{ route('project_user.get_user_by_department','departmentId') }}">
                         <select id="inputDepartment" class="form-control @error('checkBoxUserId') is-invalid @enderror"
                                 name="department_id">
                             <option>---Choose Department---</option>
