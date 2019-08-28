@@ -39,7 +39,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function projects()
     {
-        return $this->belongsToMany(Project::class)->withPivot('date_start', 'date_finish');
+        return $this->belongsToMany(Project::class)->withPivot('date_start', 'date_finish')->withTimestamps();
     }
 
     public function tasks()

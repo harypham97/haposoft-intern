@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\Admin\Project\AssignRequest;
 use App\Http\Requests\ProjectUserRequest;
 use App\Models\Department;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use DateTime;
 
 class ProjectUserController extends Controller
 {
@@ -18,14 +20,9 @@ class ProjectUserController extends Controller
      */
     public function index()
     {
-        $tableProjects = Project::with(['users'=>function($query){
-           $query->select('user_id','name')->groupBy('user_id');
+        $tableProjects = Project::with(['users' => function ($query) {
+            $query->select('user_id', 'name')->groupBy('users.id');
         }])->orderByDesc('id')->paginate(config('variables.number_per_page'));
-
-//        $users = Project::with(['users' => function ($query) {
-//            $query->select('user_id','name')->groupBy('user_id');
-//        }])->findOrFail($projectId);
-
         $listDepartments = Department::all()->sortBy('name');
         $listProjects = Project::all()->sortBy('name');
         $data = [
@@ -34,17 +31,6 @@ class ProjectUserController extends Controller
             'listDepartments' => $listDepartments
         ];
         return view('admin.project_user.index', $data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
-
     }
 
     /**
@@ -72,25 +58,23 @@ class ProjectUserController extends Controller
                 $query[] = ['user_id' => $arrUserId[$i]];
             }
             $project->users()->attach($query);
-            return redirect('/admin/project_user')->with('message', __('messages.project_user_add'));
+            return redirect()->route('project_user.index')->with('message', __('messages.project_user_add'));
         } else {
             $usersExist = User::findOrFail($checkExist);
             foreach ($usersExist as $user) {
                 $nameUsers .= $user->name . ' || ';
             }
-            return redirect('/admin/project_user')->with('message', 'Error: added user already exists, ' . $nameUsers);
+            return redirect()->route('project_user.index')->with('message', 'Error: added user already exists, ' . $nameUsers);
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function showListAssign()
     {
-
+        $projects = Project::all()->sortBy('name');
+        $data = [
+            'projects' => $projects,
+        ];
+        return view('admin.project_user.assign', $data);
     }
 
     /**
@@ -107,9 +91,12 @@ class ProjectUserController extends Controller
 
         $data = [
             'project' => $project,
-            'message' => 'Your AJAX processed correctly',
         ];
-        return response()->json($data);
+        return response()->json([
+            'success' => true,
+            'message' => 'get info project for editing successful',
+            'data' => $data,
+        ]);
     }
 
     /**
@@ -134,7 +121,85 @@ class ProjectUserController extends Controller
     {
         $project = Project::findOrFail($id);
         $project->users()->detach();
-        return redirect('/admin/project_user')->with('message', __('messages.project_user_destroy'));
+        return redirect()->route('project_user.index')->with('message', __('messages.project_user_destroy'));
+    }
+
+    /**
+     * @param AssignRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function assignUser(AssignRequest $request)
+    {
+        $date_unavailable = [];
+        $flag = true;
+        $error = [];
+        $project = Project::findOrFail($request->project_id);
+        $date_available = $this->createArrayDate($project->date_start, $project->date_finish);
+        $date_assign = $this->createArrayDate($request->date_join, $request->date_leave);
+
+        $date_assigned = $project->users()->select('date_start', 'date_finish')
+            ->where([
+                ['user_id', '=', $request->user_id],
+                ['date_start', '!=', 'null']
+            ])
+            ->orderBy('date_start')
+            ->get();
+
+        for ($i = 0; $i < sizeof($date_assigned); $i++) {
+            $start = new DateTime($date_assigned[$i]['date_start']);
+            $finish = new DateTime($date_assigned[$i]['date_finish']);
+            $size_date = $start->diff($finish)->days + 1;
+            $offset = array_search($date_assigned[$i]['date_start'], $date_available);
+
+            $split_date_assigned = array_splice($date_available, $offset, $size_date);
+            for ($j = 0; $j < sizeof($split_date_assigned); $j++) {
+                array_push($date_unavailable, $split_date_assigned[$j]);
+            }
+        }
+
+        for ($i = 0; $i < sizeof($date_assign); $i++) {
+            if (in_array($date_assign[$i], $date_unavailable)) {
+                $flag = false;
+                $error[] = $date_assign[$i];
+                break;
+            }
+        }
+
+        if ($flag) {
+            $project->users()->attach($request->user_id, [
+                'date_start' => $request->date_join,
+                'date_finish' => $request->date_leave,
+            ]);
+            $data = [
+                'project_start' => $project->date_start,
+                'project_finish' => $project->date_finish
+            ];
+            return response()->json([
+                'success' => true,
+                'message' => 'user assign to project successful',
+                'data' => $data,
+            ]);
+        } else {
+            $data = [
+                'error' => $error,
+            ];
+            return response()->json([
+                'success' => false,
+                'message' => 'error assign new date for user',
+                'data' => $data,
+            ]);
+        }
+    }
+
+    public function createArrayDate($fromDate, $toDate)
+    {
+        $arr_date = [];
+        $from_date = new DateTime($fromDate);
+        $to_date = new DateTime($toDate);
+        for ($i = $from_date; $i <= $to_date; $i->modify('+1 day')) {
+            $arr_date[] = $i->format("Y-m-d");
+        }
+        return $arr_date;
     }
 
     public function getUserByDepartment($departmentId)
@@ -157,47 +222,43 @@ class ProjectUserController extends Controller
         return response()->json($data);
     }
 
-    public function showListAssign()
+    public function getUserByProject($projectId)
     {
-        $projects = Project::all()->sortBy('name');
-        $data = [
-            'projects' => $projects,
-        ];
-        return view('admin.project_user.assign', $data);
-    }
-
-    public function getProjectById($projectId)
-    {
-        $data = [];
         if (is_numeric($projectId)) {
-            $project = Project::with(['users' => function ($query) {
-                $query->orderBy('name');
-            }])->findOrFail($projectId);
-
-            $users = Project::with(['users' => function ($query) {
-                $query->select('user_id','name')->groupBy('user_id');
+            $project_users = Project::with(['users' => function ($query) {
+                $query->orderBy('name')->groupBy('users.id');
             }])->findOrFail($projectId);
             $data = [
-                'project' => $project,
-                'message' => 'call ajax',
-                'users' => $users
+                'project_users' => $project_users,
             ];
+            return response()->json([
+                'success' => true,
+                'message' => 'get users by project successful',
+                'data' => $data,
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'error get users by project',
+                'data' => '',
+            ]);
         }
-        return response()->json($data);
     }
 
-    public function assignUser(Request $request)
+    public function getProjectAssignByUser($projectId, $userId)
     {
-        $projectId = $request->project_id;
-        $userId = $request->user_id;
-        $dateJoin = $request->date_join;
-        $dateLeave = $request->date_leave;
+        $user_assigned = Project::with(['users' => function ($query) use ($userId) {
+            $query->select('user_id', 'name')
+                ->orderBy('date_start')
+                ->where('user_id', $userId);
+        }])->findOrFail($projectId);
         $data = [
-            'request'=> $request->all(),
+            'user_assigned' => $user_assigned
         ];
-
-
-        return response()->json($data);
-
+        return response()->json([
+            'success' => true,
+            'message' => 'get users by project successful',
+            'data' => $data,
+        ]);
     }
 }

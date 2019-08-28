@@ -10,6 +10,10 @@
             <form id="formAssign" action="{{route('project_user.assign_user')}}">
                 <div class="form-group col-md-6 mt-3">
                     <label for="inputProject">Choose project:</label>
+                    <input type="hidden" id="urlGetUserByProject"
+                           value="{{ route('project_user.get_user_by_project','projectId') }}">
+                    <input type="hidden" id="urlGetProjectAssignByUser"
+                           value="{{ route('project_user.get_project_assign_by_user',['projectId','userId']) }}">
                     <select id="inputProjectAssign" class="form-control" name="project_id">
                         <option>---Choose project---</option>
                         @foreach( $projects as $project)
@@ -21,19 +25,21 @@
                 <div class="d-flex">
                     <div class="form-group col-4">
                         <label for="inputUser">User:</label>
-                        <select id="inputSelectUser" class="form-control" name="user_id"></select>
+                        <select id="inputSelectUser" class="form-control" name="user_id">
+                        </select>
                     </div>
-                    <div class="form-group col-3">
+                    <div class="form-group col-4">
                         <label for="inputDateJoin">Date join:</label>
                         <input type="date" class="form-control" id="inputDateJoin" name="date_join">
                     </div>
-                    <div class="form-group col-3">
+                    <div class="form-group col-4">
                         <label for="inputDateLeave">Date leave:</label>
                         <input type="date" class="form-control" id="inputDateLeave" name="date_leave">
                     </div>
-                    <div class="col-2 d-flex align-items-center mt-3">
-                        <button class="btn btn-primary" id="btnAssign">Assign</button>
-                    </div>
+                </div>
+                <div class="form-group col-8">
+                    <button class="btn btn-primary mt-2" id="btnAssign">Assign</button>
+                    <span class="d-block mt-3" id="errorAssign"></span>
                 </div>
             </form>
         </div>

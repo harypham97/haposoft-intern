@@ -33,20 +33,22 @@ $(document).ready(function () {
 
 
     $('#tableTaskAssign tbody').on('click', '.deleteTask', function () {
-        if (confirm("Delete this task?")) {
-            var taskId = $(this).attr('value');
-            var node = this;
-            $.ajax({
-                type: 'DELETE',
-                url: baseUrl + '/hapo-intern/admin/tasks/' + taskId,
-                success: function (data) {
-                    $(node).closest("tr").remove();
-                },
-                error: function (e) {
-                    console.log(e);
-                }
-            });
-        }
+
+        // if (confirm("Delete this task?")) {
+        //     var taskId = $(this).attr('value');
+        //     var node = this;
+        //     $.ajax({
+        //         type: 'DELETE',
+        //         url: baseUrl + '/hapo-intern/admin/tasks/' + taskId,
+        //         success: function (data) {
+        //             $(node).closest("tr").remove();
+        //         },
+        //         error: function (e) {
+        //             console.log(e);
+        //         }
+        //     });
+        // }
+        alert(this.parentNode.parentNode.cells[0].textContent);
     });
 
     function renderTable(projectId) {
@@ -63,7 +65,7 @@ $(document).ready(function () {
                 $.each(data.tasks, function (i, task) {
                     htmlTable +=
                         `<tr>
-                             <td>${task.name}</td>
+                             <td id="taskName">${task.name}</td>
                              <td>${task.user_id}</td>
                              <td>${task.hour}</td>
                              <td>${task.created_at}</td>
@@ -78,7 +80,6 @@ $(document).ready(function () {
                 $('#inputSelectUser').append(htmlSelect);
             },
             error: function (e) {
-                console.log('error:' + e);
             }
         });
     }

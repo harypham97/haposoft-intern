@@ -9,4 +9,13 @@ return [
         'customer_index' => 'Customer page',
         'customer_staff_index' => 'Staff\'s Company',
     ],
+    'admin_titles' => [
+        'customer_index' => 'Customers',
+        'customer_edit' => 'Edit customers',
+        'customer_create' => 'Create new customer',
+        'report_index' => 'Reports',
+        'report_show' => 'Info report',
+        'project_user_index' => 'Add users for projects'
+    ],
+
 ];
