@@ -6,14 +6,14 @@
         <form method="GET" action="{{ route('client.customers.staffs.index') }}">
             <div class="d-flex col-8 mx-auto justify-content-center">
                 <select id="department_id" class="form-control" name="department_id">
-                    <option>Choose department</option>
-                    @foreach($departments as $department_id => $department_name)
+                    <option value="{{ config('variables.default_value_option') }}">Choose department</option>
+                @foreach($departments as $department_id => $department_name)
                         @if($department_id == $department_id_chose)
                             {
-                            <option value="{{$department_id}} " selected>{{$department_name}}</option>
+                            <option value="{{ $department_id }} " selected>{{ $department_name }}</option>
                             }
                         @else
-                            <option value="{{$department_id}}">{{$department_name}}</option>
+                            <option value="{{ $department_id }}">{{ $department_name }}</option>
                         @endif
                     @endforeach
                 </select>
@@ -51,8 +51,5 @@
             @endif
             </tbody>
         </table>
-        @if( $staffs instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            {{ $staffs->links('pagination::bootstrap-4') }}
-        @endif
     </div>
 @endsection

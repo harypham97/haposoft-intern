@@ -14,7 +14,6 @@ $factory->define(App\Models\Customer::class, function (Faker $faker) {
         'company' => $faker->company,
         'avatar' => Str::random(10),
         'phone' => $faker->phoneNumber,
-        'role_id' => 1,
         'created_at' => now()
     ];
 });

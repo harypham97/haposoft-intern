@@ -1,13 +1,13 @@
 @extends('admin.layouts.default')
-@section('title', 'Add user for project')
-@section('name_feature', 'Add users for project')
+@section('title', trans('view.admin_titles.project_user_index'))
+@section('name_feature', trans('view.admin_titles.project_user_index'))
 @section('content')
     <div class="container-fluid">
         @if (Session::has('message'))
             <p class="text-danger">{{ Session::get('message') }}</p>
         @endif
         <div class="container">
-            <form id="formAddUserProject" action="{{route('project_user.store')}}" method="POST">
+            <form id="formAddUserProject" action="{{ route('project_user.store') }}" method="POST">
                 {{ csrf_field() }}
                 <div class="form-row">
                     <div class="form-group col-md-6 mt-3">
@@ -16,7 +16,7 @@
                                 name="project_id">
                             <option>---Choose project---</option>
                             @foreach($listProjects as $project)
-                                <option value="{{$project->id}}" {{(old('project_id')==$project->id)? 'selected':''}}>{{$project->name}}</option>
+                                <option value="{{ $project->id }}" {{ (old('project_id')==$project->id)? 'selected':'' }}>{{ $project->name }}</option>
                             @endforeach
                         </select>
                         @error('project_id')
@@ -31,7 +31,7 @@
                             <option>---Choose Department---</option>
                             <option value="all">All Departments</option>
                             @foreach( $listDepartments as $department)
-                                <option value="{{$department->id}}">{{$department->name}}</option>
+                                <option value="{{ $department->id }}">{{ $department->name }}</option>
                             @endforeach
                         </select>
                         @error('checkBoxUserId')
@@ -58,22 +58,22 @@
             <tbody>
             @foreach($tableProjects as $project)
                 <tr>
-                    <td>{{$project->id}}</td>
-                    <td>{{$project->name}}</td>
+                    <td>{{ $project->id }}</td>
+                    <td>{{ $project->name }}</td>
                     <td>
                         @foreach($project->users as $user)
-                            {{$user->name}} ||
+                            {{ $user->name }} ||
                         @endforeach
                     </td>
                     <td class=" d-flex">
-                        <button class="btn btn-outline-primary btnInfoModal" id="{{$project->id}}" title="View detail">
+                        <button class="btn btn-outline-primary btnInfoModal" id="{{ $project->id }}" title="View detail">
                             <i class="fa fa-fw fa-search"></i>
                         </button>
                         <a class="btn btn-outline-warning ml-3 mr-3 btnEdit"
-                           href="{{route('project_user.edit',$project->id)}}" title="Edit">
+                           href="{{ route('project_user.edit',$project->id) }}" title="Edit">
                             <i class="fa fa-fw fa-edit"></i>
                         </a>
-                        <form method="POST" action="{{route('project_user.destroy',$project->id)}}">
+                        <form method="POST" action="{{ route('project_user.destroy',$project->id) }}">
                             {{ csrf_field() }}
                             {{ method_field('DELETE') }}
                             <button class="btn btn-outline-danger" type="submit" title="Delete"

@@ -21,7 +21,6 @@ class CreateCustomersTable extends Migration
             $table->string('company')->nullable();
             $table->string('avatar')->nullable();
             $table->string('phone')->nullable();
-            $table->integer('role_id')->unsigned();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

@@ -144,13 +144,16 @@ return [
         ],
 
         'customer_id' => [
-            'numeric' => 'Don\'t forget to choose your customer!'
+            'numeric' => 'Don\'t forget to choose your customer.'
         ],
         'checkBoxUserId' => [
-            'required' => 'Don\'t forger to choose staffs for project!'
+            'required' => 'Don\'t forger to choose staffs for project.'
         ],
         'project_id' => [
-            'numeric' => 'Don\'t forget to choose your project!'
+            'numeric' => 'Don\'t forget to choose your project.'
+        ],
+        'user_id' => [
+            'numeric' => 'Don\'t forget to choose user.'
         ],
 
     ],
