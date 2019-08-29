@@ -15,75 +15,30 @@ class StaffController extends Controller
      */
     public function index(Request $request)
     {
-        $staffs = User::with('department:id,name')->paginate(config('variables.number_per_page'));
         $departments = Department::all()->sortBy('name')->pluck('name', 'id');
+        $departmentId = $request->department_id;
+        $name = $request->name;
+        $email = $request->email;
+        $whereClause = [
+            ['name', 'like', "%$name%"],
+            ['email', 'like', "%$email%"]
+        ];
+        $data = [
+            'departments' => $departments
+        ];
+
+        if ($departmentId !== -1) {
+            $whereClause[] = ['department_id', $departmentId];
+        }
+
         if ($request->has(['department_id', 'name', 'email'])) {
-            $department_id = $request->department_id;
-            $name = $request->name;
-            $email = $request->email;
-            if (is_numeric($department_id)) {
-                if ($name == null && $email == null) {
-                    $staffs = User::with('department:id,name')
-                        ->where('department_id', $department_id)
-                        ->get();
-                } elseif ($name != null && $email == null) {
-                    $staffs = User::with('department:id,name')
-                        ->where([
-                            ['department_id', $department_id],
-                            ['name', 'like', "%$name%"]
-                        ])
-                        ->get();
-                } elseif ($name == null && $email != null) {
-                    $staffs = User::with('department:id,name')
-                        ->where([
-                            ['department_id', $department_id],
-                            ['email', 'like', "%$email%"]
-                        ])
-                        ->get();
-                } else {
-                    $staffs = User::with('department:id,name')
-                        ->where([
-                            ['department_id', $department_id],
-                            ['name', 'like', "%$name%"],
-                            ['email', 'like', "%$email%"]
-                        ])
-                        ->get();
-                }
-            } else {
-                if ($name != null && $email == null) {
-                    $staffs = User::with('department:id,name')
-                        ->where([
-                            ['name', 'like', "%$name%"]
-                        ])
-                        ->get();
-                } elseif ($name == null && $email != null) {
-                    $staffs = User::with('department:id,name')
-                        ->where([
-                            ['email', 'like', "%$email%"]
-                        ])
-                        ->get();
-                } elseif ($name == !null && $email != null) {
-                    $staffs = User::with('department:id,name')
-                        ->where([
-                            ['name', 'like', "%$name%"],
-                            ['email', 'like', "%$email%"]
-                        ])
-                        ->get();
-                }
-            }
-            $data = [
-                'staffs' => $staffs,
-                'departments' => $departments,
-                'department_id_chose' => $department_id,
-                'name' => $name,
-                'email' => $email,
-            ];
+            $data['staffs'] = User::with('department:id,name')->where($whereClause)->get();
+            $data['department_id_chose'] = $departmentId;
+            $data['name'] = $name;
+            $data['email'] = $email;
             return view('client.customers.staffs.search', $data);
         } else {
-            $data = [
-                'staffs' => $staffs,
-                'departments' => $departments
-            ];
+            $data['staffs'] = User::with('department:id,name')->paginate(config('variables.number_per_page'));
             return view('client.customers.staffs.index', $data);
         }
     }

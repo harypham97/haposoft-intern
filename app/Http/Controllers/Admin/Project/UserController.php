@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\Project;
 
 use App\Http\Requests\Admin\Project\AssignRequest;
 use App\Http\Requests\ProjectUserRequest;
 use App\Models\Department;
 use App\Models\Project;
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DateTime;
+use Illuminate\Http\Request;
 
-class ProjectUserController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,7 +21,7 @@ class ProjectUserController extends Controller
     public function index()
     {
         $tableProjects = Project::with(['users' => function ($query) {
-            $query->select('user_id', 'name')->groupBy('users.id');
+            $query->select('user_id', 'name');
         }])->orderByDesc('id')->paginate(config('variables.number_per_page'));
         $listDepartments = Department::all()->sortBy('name');
         $listProjects = Project::all()->sortBy('name');
@@ -34,10 +34,8 @@ class ProjectUserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param ProjectUserRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(ProjectUserRequest $request)
     {
@@ -53,8 +51,8 @@ class ProjectUserController extends Controller
         $arrUserId = $request->get('checkBoxUserId');
         $checkExist = array_intersect($arrCompare, $arrUserId);
 
-        if (sizeof($checkExist) == 0) {
-            for ($i = 0; $i < sizeof($arrUserId); $i++) {
+        if (count($checkExist) == 0) {
+            for ($i = 0; $i < count($arrUserId); $i++) {
                 $query[] = ['user_id' => $arrUserId[$i]];
             }
             $project->users()->attach($query);
@@ -66,49 +64,6 @@ class ProjectUserController extends Controller
             }
             return redirect()->route('project_user.index')->with('message', 'Error: added user already exists, ' . $nameUsers);
         }
-    }
-
-    public function showListAssign()
-    {
-        $projects = Project::all()->sortBy('name');
-        $data = [
-            'projects' => $projects,
-        ];
-        return view('admin.project_user.assign', $data);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $project = Project::with(['users' => function ($query) {
-            $query->select('user_id', 'name')->distinct('id');
-        }])->findOrFail($id);
-
-        $data = [
-            'project' => $project,
-        ];
-        return response()->json([
-            'success' => true,
-            'message' => 'get info project for editing successful',
-            'data' => $data,
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**
@@ -125,44 +80,73 @@ class ProjectUserController extends Controller
     }
 
     /**
+     * @param $projectId
+     * @param $userId
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteUserInProject($projectId, $userId)
+    {
+        $project = Project::findOrFail($projectId);
+        $project->users()->detach($userId);
+        return response()->json([
+            'success' => true,
+            'message' => 'bla bla',
+            'data' => $projectId,
+            'user' => $userId
+        ]);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function showListAssign()
+    {
+        $projects = Project::all()->sortBy('name');
+        $data = [
+            'projects' => $projects,
+        ];
+        return view('admin.project_user.assign', $data);
+    }
+
+    /**
      * @param AssignRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function assignUser(AssignRequest $request)
     {
-        $date_unavailable = [];
+        $arrSaveDateAssigned = [];
+        $dateUnavailable = [];
         $flag = true;
         $error = [];
         $project = Project::findOrFail($request->project_id);
-        $date_available = $this->createArrayDate($project->date_start, $project->date_finish);
-        $date_assign = $this->createArrayDate($request->date_join, $request->date_leave);
-
-        $date_assigned = $project->users()->select('date_start', 'date_finish')
+        $dateProject = $this->createArrayDate($project->date_start, $project->date_finish);
+        $dateAssign = $this->createArrayDate($request->date_join, $request->date_leave);
+        $dateAssigned = $project->users()->select('date_start', 'date_finish')
             ->where([
-                ['user_id', '=', $request->user_id],
+                ['user_id', $request->user_id],
                 ['date_start', '!=', 'null']
             ])
             ->orderBy('date_start')
             ->get();
 
-        for ($i = 0; $i < sizeof($date_assigned); $i++) {
-            $start = new DateTime($date_assigned[$i]['date_start']);
-            $finish = new DateTime($date_assigned[$i]['date_finish']);
-            $size_date = $start->diff($finish)->days + 1;
-            $offset = array_search($date_assigned[$i]['date_start'], $date_available);
-
-            $split_date_assigned = array_splice($date_available, $offset, $size_date);
-            for ($j = 0; $j < sizeof($split_date_assigned); $j++) {
-                array_push($date_unavailable, $split_date_assigned[$j]);
-            }
+        for ($i = 0; $i < count($dateAssigned); $i++) {
+            $arrSaveDateAssigned[] = $this->createArrayDate($dateAssigned[$i]['date_start'], $dateAssigned[$i]['date_finish']);
         }
+        if (!empty($arrSaveDateAssigned))
+            $dateUnavailable = call_user_func_array("array_merge", $arrSaveDateAssigned);
 
-        for ($i = 0; $i < sizeof($date_assign); $i++) {
-            if (in_array($date_assign[$i], $date_unavailable)) {
-                $flag = false;
-                $error[] = $date_assign[$i];
-                break;
+        if ($this->checkDateAssignInRangeProject($dateAssign, $dateProject)) {
+            for ($i = 0; $i < count($dateAssign); $i++) {
+                if (in_array($dateAssign[$i], $dateUnavailable)) {
+                    $flag = false;
+                    $error[] = $dateAssign[$i];
+                    break;
+                }
             }
+        } else {
+            $flag = false;
+            $error[] = 'Date assign out of time\'s project';
         }
 
         if ($flag) {
@@ -172,7 +156,7 @@ class ProjectUserController extends Controller
             ]);
             $data = [
                 'project_start' => $project->date_start,
-                'project_finish' => $project->date_finish
+                'project_finish' => $project->date_finish,
             ];
             return response()->json([
                 'success' => true,
@@ -191,45 +175,67 @@ class ProjectUserController extends Controller
         }
     }
 
+    /**
+     * @param $fromDate
+     * @param $toDate
+     * @return array
+     */
     public function createArrayDate($fromDate, $toDate)
     {
-        $arr_date = [];
-        $from_date = new DateTime($fromDate);
-        $to_date = new DateTime($toDate);
-        for ($i = $from_date; $i <= $to_date; $i->modify('+1 day')) {
-            $arr_date[] = $i->format("Y-m-d");
+        $arrDate = [];
+        $fromDate = new DateTime($fromDate);
+        $toDate = new DateTime($toDate);
+        for ($i = $fromDate; $i <= $toDate; $i->modify('+1 day')) {
+            $arrDate[] = $i->format("Y-m-d");
         }
-        return $arr_date;
+        return $arrDate;
+    }
+
+    /**
+     * @param array $dateAssign
+     * @param array $dateProject
+     * @return bool
+     */
+    public function checkDateAssignInRangeProject(array $dateAssign, array $dateProject)
+    {
+        $check = false;
+        if ($dateAssign[0] >= $dateProject[0] && $dateAssign[count($dateAssign) - 1] <= $dateProject[count($dateProject) - 1])
+            $check = true;
+        return $check;
     }
 
     public function getUserByDepartment($departmentId)
     {
         $data = [];
         if (is_numeric($departmentId)) {
-            $dept = Department::with('users')->findOrFail($departmentId);
-            $data = [
-                'department' => $dept,
-            ];
+            if ($departmentId > -1) {
+                $dept = Department::with('users')->findOrFail($departmentId);
+                $data = [
+                    'department' => $dept,
+                ];
+            } else {
+                $users = User::all()->sortBy('name');
+                $data = [
+                    'users' => $users,
+                    'department_id' => $departmentId
+                ];
+            }
         }
-
-        if ($departmentId == 'all') {
-            $users = User::all()->sortBy('name');
-            $data = [
-                'users' => $users,
-                'department_id' => $departmentId
-            ];
-        }
-        return response()->json($data);
+        return response()->json([
+            'success' => true,
+            'message' => 'get user by department successful',
+            'data' => $data,
+        ]);
     }
 
     public function getUserByProject($projectId)
     {
         if (is_numeric($projectId)) {
-            $project_users = Project::with(['users' => function ($query) {
+            $projectUsers = Project::with(['users' => function ($query) {
                 $query->orderBy('name')->groupBy('users.id');
             }])->findOrFail($projectId);
             $data = [
-                'project_users' => $project_users,
+                'project_users' => $projectUsers,
             ];
             return response()->json([
                 'success' => true,
@@ -247,13 +253,13 @@ class ProjectUserController extends Controller
 
     public function getProjectAssignByUser($projectId, $userId)
     {
-        $user_assigned = Project::with(['users' => function ($query) use ($userId) {
+        $userAssigned = Project::with(['users' => function ($query) use ($userId) {
             $query->select('user_id', 'name')
                 ->orderBy('date_start')
                 ->where('user_id', $userId);
         }])->findOrFail($projectId);
         $data = [
-            'user_assigned' => $user_assigned
+            'user_assigned' => $userAssigned
         ];
         return response()->json([
             'success' => true,

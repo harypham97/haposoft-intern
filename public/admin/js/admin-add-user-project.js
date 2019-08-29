@@ -5,16 +5,18 @@ $(document).ready(function () {
         $.ajax({
             type: "GET",
             url: url,
+            dataType: 'json',
+            encode  : true,
             success: function (data) {
                 let arrUser;
                 let listUser = document.getElementById('loopCheckBox');
                 let html = '';
 
-                if (departmentId === 'all') {
-                    arrUser = Object.values(data.users);
+                if (departmentId === '-1') {
+                    arrUser = Object.values(data.data.users);
                 }
                 else {
-                    arrUser = data.department.users;
+                    arrUser = data.data.department.users;
                 }
 
                 $('#loopCheckBox').addClass('form-control col-12 d-flex flex-wrap h-auto mb-3');
