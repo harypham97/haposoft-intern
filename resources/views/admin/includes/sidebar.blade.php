@@ -17,7 +17,7 @@
         </a>
             <ul class="collapse list-unstyled list-group list-group-flush dropdown-content " id="manageProject">
                 <a href="{{ route('projects.index') }}" class="py-2 pl-5 text-decoration-none">Projects</a>
-                <a href="{{ route('project_user.index') }}" class="py-2 pl-5 text-decoration-none">Project-User</a>
+                <a href="{{ route('project-user.index') }}" class="py-2 pl-5 text-decoration-none">Add users for project</a>
                 <a href="{{ route('project_user.show_list_assign') }}" class="py-2 pl-5 text-decoration-none">Assign</a>
             </ul>
         <a href="#manageTask" class="list-group-item list-group-item-action bg-light"

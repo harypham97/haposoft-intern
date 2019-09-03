@@ -3,7 +3,7 @@
 @section('name_feature', 'List Projects')
 @section('content')
     <div class="container-fluid">
-        <form method="GET" action="{{route('projects.create')}}">
+        <form method="GET" action="{{ route('projects.create') }}">
             <button class="btn btn-primary mt-3 mb-3"> Add new project</button>
         </form>
         @if (Session::has('message'))
@@ -23,16 +23,13 @@
             <tbody>
             @foreach($data as $project)
                 <tr>
-                    <td>{{$project->id}}</td>
-                    <td>{{$project->name}}</td>
-                    <td>{{$project->customer->name}}</td>
-                    <td>{{$project->date_start}}</td>
-                    <td>{{$project->date_finish}}</td>
+                    <td>{{ $project->id }}</td>
+                    <td>{{ $project->name }}</td>
+                    <td>{{ $project->customer->name }}</td>
+                    <td>{{ $project->date_start }}</td>
+                    <td>{{ $project->date_finish }}</td>
                     <td class="d-flex">
-                        <button class="btn btn-outline-primary btnInfoModal" id="{{$project->id}}" title="Edit">
-                            <i class="fa fa-fw fa-search"></i>
-                        </button>
-                        <a class="btn btn-outline-warning ml-3 mr-3" id="{{$project->id}}" title="Edit"
+                        <a class="btn btn-outline-warning mr-3" id="{{ $project->id }}" title="Edit"
                            href="{{route('projects.edit',$project->id)}}">
                             <i class="fa fa-fw fa-edit"></i>
                         </a>

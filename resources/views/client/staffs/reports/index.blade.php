@@ -4,15 +4,14 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex col-6">
-            <input  type="hidden" value="{{ route('client.staffs.edit_report','id') }}" id="getUrlEdit">
+            <input  type="hidden" value="{{ route('reports.edit','id') }}" id="getUrlEdit">
             <form id="formSearchReport" class="d-flex" method="get"
                   action="{{route('client.staffs.search_report_by_date',['',''])}}">
                 <input type="date" class="form-control col-5" name="from_date" id="from_date" value="{{today()->toDateString()}}">
                 <input type="date" class="form-control col-5 mx-3" name="to_date" id="to_date" value="{{today()->toDateString()}}">
                 <button class="btn btn-primary" id="btnSearchReport">Search</button>
             </form>
-            <a class="btn btn-success ml-5" href="{{ route('client.staffs.create_report') }}"> <i class="fa fa-plus">&nbsp;</i>Add
-                new</a>
+            <a class="btn btn-success ml-5" href="{{ route('reports.create') }}"> <i class="fa fa-plus">&nbsp;</i>Add new</a>
         </div>
         <br>
         <table class="table table-bordered table-hover" id="tableReportSearch">

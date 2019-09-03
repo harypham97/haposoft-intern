@@ -7,7 +7,7 @@
             <p class="text-danger">{{ Session::get('message') }}</p>
         @endif
         <div class="container">
-            <form id="formAddUserProject" action="{{ route('project_user.store') }}" method="POST">
+            <form id="formAddUserProject" action="{{ route('project-user.store') }}" method="POST">
                 {{ csrf_field() }}
                 <div class="form-row">
                     <div class="form-group col-md-6 mt-3">
@@ -16,7 +16,7 @@
                                 name="project_id">
                             <option>---Choose project---</option>
                             @foreach($listProjects as $project)
-                                <option value="{{ $project->id }}" {{ (old('project_id')==$project->id)? 'selected':'' }}>{{ $project->name }}</option>
+                                <option value="{{ $project->id }}" {{ (old('project_id') == $project->id)? 'selected':'' }}>{{ $project->name }}</option>
                             @endforeach
                         </select>
                         @error('project_id')
@@ -25,11 +25,12 @@
                     </div>
                     <div class="form-group col-md-6 mt-3">
                         <label for="labelDepartment">Choose user's Department:</label>
-                        <input type="hidden" id="urlGetUserByDepartment" value="{{ route('project_user.get_user_by_department','departmentId') }}">
+                        <input type="hidden" id="urlGetUserByDepartment"
+                               value="{{ route('project_user.get_user_by_department','departmentId') }}">
                         <select id="inputDepartment" class="form-control @error('checkBoxUserId') is-invalid @enderror"
                                 name="department_id">
                             <option>---Choose Department---</option>
-                            <option value="all">All Departments</option>
+                            <option value="-1">All Departments</option>
                             @foreach( $listDepartments as $department)
                                 <option value="{{ $department->id }}">{{ $department->name }}</option>
                             @endforeach
@@ -40,7 +41,7 @@
                     </div>
                 </div>
                 <div class="" id="loopCheckBox"></div>
-                <div class="form-group col-md-6">
+                <div class="form-group">
                     <button type="submit" class="btn btn-primary" id="btnAddNew">Add new</button>
                 </div>
             </form>
@@ -50,33 +51,30 @@
             <thead>
             <tr>
                 <th>ID</th>
-                <th class="w-25">Project name</th>
-                <th class="w-50">User name</th>
-                <th class="w-25">Action</th>
+                <th>Project name</th>
+                <th class="w-75">User name</th>
+                <th>Action</th>
             </tr>
             </thead>
             <tbody>
             @foreach($tableProjects as $project)
-                <tr>
+                <tr class="text-justify">
                     <td>{{ $project->id }}</td>
                     <td>{{ $project->name }}</td>
                     <td>
-                        @foreach($project->users as $user)
-                            {{ $user->name }} ||
+                        <input type="hidden" name="urlDeleteUserInProject" value="{{ route('project_user.delete_user_in_project',[$project->id,'userId']) }}">
+                        @foreach($project->users->unique('name') as $user)
+                            <button class="btn btn btn-outline-success mx-1 my-1 delete-user-in-project"
+                                    value="{{ $user->user_id }}" title="Delete user">
+                                {{ $user->name }} &nbsp;<i class="fa fa-window-close" aria-hidden="true"></i>
+                            </button>
                         @endforeach
                     </td>
-                    <td class=" d-flex">
-                        <button class="btn btn-outline-primary btnInfoModal" id="{{ $project->id }}" title="View detail">
-                            <i class="fa fa-fw fa-search"></i>
-                        </button>
-                        <a class="btn btn-outline-warning ml-3 mr-3 btnEdit"
-                           href="{{ route('project_user.edit',$project->id) }}" title="Edit">
-                            <i class="fa fa-fw fa-edit"></i>
-                        </a>
-                        <form method="POST" action="{{ route('project_user.destroy',$project->id) }}">
+                    <td>
+                        <form method="POST" action="{{ route('project-user.destroy',$project->id) }}">
                             {{ csrf_field() }}
                             {{ method_field('DELETE') }}
-                            <button class="btn btn-outline-danger" type="submit" title="Delete"
+                            <button class="btn btn-outline-danger" type="submit" title="Delete all users"
                                     onclick="return confirm('Are you sure you want to delete the record {{ $project->id }} ?')">
                                 <i class="fa fa-fw fa-trash"></i>
                             </button>
