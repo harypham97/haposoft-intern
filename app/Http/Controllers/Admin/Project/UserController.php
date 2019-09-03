@@ -30,7 +30,7 @@ class UserController extends Controller
             'listProjects' => $listProjects,
             'listDepartments' => $listDepartments
         ];
-        return view('admin.project_user.index', $data);
+        return view('admin.projects.users.index', $data);
     }
 
     /**
@@ -56,13 +56,13 @@ class UserController extends Controller
                 $query[] = ['user_id' => $arrUserId[$i]];
             }
             $project->users()->attach($query);
-            return redirect()->route('project_user.index')->with('message', __('messages.project_user_add'));
+            return redirect()->route('project-user.index')->with('message', __('messages.project_user_add'));
         } else {
             $usersExist = User::findOrFail($checkExist);
             foreach ($usersExist as $user) {
                 $nameUsers .= $user->name . ' || ';
             }
-            return redirect()->route('project_user.index')->with('message', 'Error: added user already exists, ' . $nameUsers);
+            return redirect()->route('project-user.index')->with('message', 'Error: added user already exists, ' . $nameUsers);
         }
     }
 
@@ -76,7 +76,7 @@ class UserController extends Controller
     {
         $project = Project::findOrFail($id);
         $project->users()->detach();
-        return redirect()->route('project_user.index')->with('message', __('messages.project_user_destroy'));
+        return redirect()->route('project-user.index')->with('message', __('messages.project_user_destroy'));
     }
 
     /**
@@ -91,9 +91,33 @@ class UserController extends Controller
         $project->users()->detach($userId);
         return response()->json([
             'success' => true,
-            'message' => 'bla bla',
-            'data' => $projectId,
-            'user' => $userId
+            'message' => 'delete user in project successful',
+            'data' => '',
+        ]);
+    }
+
+    /**
+     * @param $projectId
+     * @param $userId
+     * @param $dateJoin
+     * @param $dateLeave
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteAssignment($projectId, $userId, $dateJoin, $dateLeave)
+    {
+        $project = Project::findOrFail($projectId);
+//        $project->users()->where([
+//            ['date_start',$dateJoin],
+//            ['date_finish', $dateLeave]
+//        ])->detach($userId);
+       $data=  $project->users()->where([
+            ['date_start',$dateJoin],
+            ['date_finish', $dateLeave]
+        ])->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'delete assignment successful',
+            'data' => $data,
         ]);
     }
 
@@ -106,7 +130,7 @@ class UserController extends Controller
         $data = [
             'projects' => $projects,
         ];
-        return view('admin.project_user.assign', $data);
+        return view('admin.projects.users.assign', $data);
     }
 
     /**

@@ -43,7 +43,7 @@
                 </div>
             </form>
         </div>
-
+        <input type="hidden" id="urlDeleteAssignment" value="{{ route('project_user.delete_assignment',['projectId','userId','dateJoin','dateLeave']) }}">
         <br><br>
         <table class="table table-bordered table-hover" id="tableAssign">
             <thead>
