@@ -7,7 +7,7 @@
                 <a class="nav-link" href="{{route('client.customers.index')}}">Home <span class="sr-only">(current)</span></a>
             </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Projects <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{{ route('client.customers.project.index') }}">Projects <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" href="{{route('client.customers.staffs.index')}}">Staffs <span class="sr-only">(current)</span></a>
@@ -17,10 +17,7 @@
                     <a class="nav-link" href="{{route('client.staffs.index')}}">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Projects Join<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Tasks <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{{ route('list-project.index') }}">Projects Join<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" href="{{route('reports.index')}}">Reports <span class="sr-only">(current)</span></a>

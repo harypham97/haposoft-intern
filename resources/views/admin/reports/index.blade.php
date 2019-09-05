@@ -26,10 +26,10 @@
                             <i class="fa fa-fw fa-search"></i>
                         </button>
                         <a class="btn btn-outline-warning ml-3 mr-3" id="{{$report->id}}" title="Edit"
-                           href="{{route('$reports.edit',$report->id)}}">
+                           href="{{route('manage-reports.edit',$report->id)}}">
                             <i class="fa fa-fw fa-edit"></i>
                         </a>
-                        <form method="POST" action="{{ route('$reports.destroy', [$report->id]) }}">
+                        <form method="POST" action="{{ route('manage-reports.destroy', [$report->id]) }}">
                             {{ csrf_field() }}
                             {{ method_field('DELETE') }}
                             <button class="btn btn-outline-danger" type="submit" title="Delete"

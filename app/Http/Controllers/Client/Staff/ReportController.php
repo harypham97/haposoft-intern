@@ -39,7 +39,7 @@ class ReportController extends Controller
      * @param StoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreRequest $request)
+    public function storeReport(StoreRequest $request)
     {
         $arrTasksId = $request->check_box_task_id;
         $arrReportTasks = [];
@@ -122,7 +122,7 @@ class ReportController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroyReport($id)
     {
         $report = Report::findOrFail($id);
         $report->tasks()->detach();
