@@ -174,10 +174,10 @@ class UserController extends Controller
         }
 
         if ($flag) {
-            $project->users()->attach($request->user_id, [
-                'date_start' => $request->date_join,
-                'date_finish' => $request->date_leave,
-            ]);
+//            $project->users()->attach($request->user_id, [
+//                'date_start' => $request->date_join,
+//                'date_finish' => $request->date_leave,
+//            ]);
             $data = [
                 'project_start' => $project->date_start,
                 'project_finish' => $project->date_finish,
@@ -186,6 +186,10 @@ class UserController extends Controller
                 'success' => true,
                 'message' => 'user assign to project successful',
                 'data' => $data,
+                'date_unavailable'=> $dateUnavailable,
+                'date_dateAssign'=> $dateAssign,
+                'date_dateAssigned' => $dateAssigned,
+
             ]);
         } else {
             $data = [

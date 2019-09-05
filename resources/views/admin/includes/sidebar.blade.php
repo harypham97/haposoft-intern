@@ -27,7 +27,7 @@
         </a>
             <ul class="collapse list-unstyled list-group list-group-flush dropdown-content " id="manageTask">
                 <a href="{{ route('tasks.index') }}" class="py-2 pl-5 text-decoration-none">Tasks</a>
-                <a href="{{ route('reports.index') }}" class="py-2 pl-5 text-decoration-none">Reports</a>
+                <a href="{{ route('manage-reports.index') }}" class="py-2 pl-5 text-decoration-none">Reports</a>
             </ul>
         <a href="#" class="list-group-item list-group-item-action bg-light">OverView</a>
     </div>

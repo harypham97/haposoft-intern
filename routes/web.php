@@ -33,7 +33,7 @@ Route::namespace('Admin')->group(function () {
         Route::resource('projects', 'ProjectController');
         Route::resource('project-user', 'Project\UserController');
         Route::resource('tasks', 'TaskController');
-        Route::resource('reports', 'ReportController');
+        Route::resource('manage-reports', 'ReportController');
         Route::resource('customers', 'CustomerController');
     });
     Route::prefix('admin/ajax')->group(function () {
@@ -42,23 +42,28 @@ Route::namespace('Admin')->group(function () {
         Route::get('/get-project-assign-by-user/{projectId}/{userId}', 'Project\UserController@getProjectAssignByUser')->name('project_user.get_project_assign_by_user');
         Route::post('/assign-user', 'Project\UserController@assignUser')->name('project_user.assign_user');
         Route::get('/get-task-by-project-id/{projectId}', 'TaskController@getTaskByProjectId');
-        Route::delete('/delete-user-in-project/{projectId}/{userId}','Project\UserController@deleteUserInProject')->name('project_user.delete_user_in_project');
-        Route::delete('/delete-assignment/{projectId}/{userId}/{dateJoin}/{dateLeave}','Project\UserController@deleteAssignment')->name('project_user.delete_assignment');
+        Route::delete('/delete-user-in-project/{projectId}/{userId}', 'Project\UserController@deleteUserInProject')->name('project_user.delete_user_in_project');
+        Route::delete('/delete-assignment/{projectId}/{userId}/{dateJoin}/{dateLeave}', 'Project\UserController@deleteAssignment')->name('project_user.delete_assignment');
     });
 });
 Route::namespace('Client')->group(function () {
-    Route::prefix('client/ajax')->group(function () {
-        Route::post('/store-staff-report', 'StaffController@storeReport')->name('client.staffs.store_report');
-        Route::get('/get-tasks-by-project/{projectId}', 'Staff\ReportController@getTasksByProject')->name('client.staffs.get_tasks_by_project');
-        Route::delete('/delete-staff-report/{reportId}', 'StaffController@destroyReport')->name('client.staffs.delete_report');
-        Route::get('/search-report-by-date/{fromDate}/{toDate}', 'Staff\ReportController@searchReportByDate')->name('client.staffs.search_report_by_date');
+    Route::namespace('Staff')->group(function () {
+        Route::prefix('client/ajax')->group(function () {
+            Route::post('/store-staff-report', 'ReportController@storeReport')->name('client.staffs.store_report');
+            Route::get('/get-tasks-by-project/{projectId}', 'ReportController@getTasksByProject')->name('client.staffs.get_tasks_by_project');
+            Route::delete('/delete-staff-report/{reportId}', 'ReportController@destroyReport')->name('client.staffs.delete_report');
+            Route::get('/search-report-by-date/{fromDate}/{toDate}', 'ReportController@searchReportByDate')->name('client.staffs.search_report_by_date');
+            Route::get('/get-all-tasks-assigned-by-staff/{staffId}', 'ProjectController@getTaskAssigned')->name('client.staffs.get_all_task_assigned_by_staff');
+        });
     });
     Route::prefix('staffs')->middleware('auth')->group(function () {
-        Route::get('/', 'StaffController@index')->name('client.staffs.index');
+        Route::get('/', 'ClientController@index')->name('client.staffs.index');
         Route::resource('reports', 'Staff\ReportController');
+        Route::resource('list-project', 'Staff\ProjectController');
     });
     Route::prefix('customers')->middleware('auth:customer')->group(function () {
-        Route::get('/', 'CustomerController@index')->name('client.customers.index');
+        Route::get('/', 'ClientController@index')->name('client.customers.index');
+        Route::get('/list-project', 'Customer\ProjectController@index')->name('client.customers.project.index');
         Route::get('staffs', 'Customer\StaffController@index')->name('client.customers.staffs.index');
     });
 });

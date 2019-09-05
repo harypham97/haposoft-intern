@@ -43,6 +43,7 @@ $(document).ready(function () {
             contentType: false,
             data: formData,
             success: function (data) {
+                let urlEdit = $('#urlTableEditReport').val();
                 $('.form-control').removeClass('is-invalid');
                 $('.invalid-feedback').remove();
                 alert('report saved!!!');
@@ -55,18 +56,24 @@ $(document).ready(function () {
                          <td>${getCurrentTime()}</td>
                          <td>
                              <button class="btn btn-outline-danger deleteReport" value="${data.data.report_id}" title="Delete"> <i class="fa fa-fw fa-trash"></i></button>
+                            <a class="btn btn-outline-warning ml-3 mr-3" title="Edit"
+                               href="${urlEdit.replace('id', data.data.report_id)}">
+                            <i class="fa fa-fw fa-edit"></i>
+                            </a>
                          </td>
                       </tr>`);
             },
             error: function (data) {
-                $('.form-control').removeClass('is-invalid');
-                $('.invalid-feedback').remove();
-                let errors = data.responseJSON.errors;
-                let keys_errors = Object.keys(errors);
-                for (let i = 0; i < keys_errors.length; i++) {
-                    let element = $('[name="' + keys_errors[i] + '"]');
-                    element.addClass('is-invalid');
-                    element.after(`<span class="invalid-feedback"><strong>${errors[keys_errors[i]][0]}</strong></span>`);
+                if (data.status === 422) {
+                    $('.form-control').removeClass('is-invalid');
+                    $('.invalid-feedback').remove();
+                    let errors = data.responseJSON.errors;
+                    let keys_errors = Object.keys(errors);
+                    for (let i = 0; i < keys_errors.length; i++) {
+                        let element = $('[name="' + keys_errors[i] + '"]');
+                        element.addClass('is-invalid');
+                        element.after(`<span class="invalid-feedback"><strong>${errors[keys_errors[i]][0]}</strong></span>`);
+                    }
                 }
             }
         });
@@ -133,6 +140,47 @@ $(document).ready(function () {
                     html += `<tr><td colspan="4" class="text-center">---No data to display---</td></tr>`;
                 }
                 $('#tableReportSearch').append(html);
+            },
+            error: function (data) {
+            }
+        });
+    });
+
+    // project-join's staff
+    $('#projectJoined').on('click', function (e) {
+        e.preventDefault();
+        location.reload();
+    });
+
+    $('#taskAssigned').on('click', function (e) {
+        e.preventDefault();
+        $('#projectJoined').removeClass('active');
+        $('#taskAssigned').addClass('active');
+        $('#tableProjectJoin').remove();
+        $('#tableTaskAssigned').removeClass('d-none');
+        let url = $('#urlGetTasksAssignedByStaff').val();
+        $.ajax({
+            type: 'GET',
+            url: url,
+            success: function (data) {
+                if (data.success === true) {
+                    let htmlTable = ``;
+                    let tasks = data.data.tasks;
+                    console.log(data);
+                    $.each(tasks, function (i, task) {
+                        htmlTable +=
+                            `<tr>
+                                <td>${i + 1 }</td>
+                                <td>${task.project.name}</td>
+                                <td>${task.name}</td>
+                                <td class="date-join">${task.hour}</td>
+                             </tr>`;
+                    });
+                    $('#tableTaskAssigned').append(htmlTable);
+                }
+                else {
+                    alert('something wrong, try again later!')
+                }
             },
             error: function (data) {
             }

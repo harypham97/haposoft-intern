@@ -65,6 +65,7 @@ $(document).ready(function () {
                 $('.form-control').removeClass('is-invalid');
                 $('.invalid-feedback').remove();
                 if (data.success === true) {
+                    console.log(data);
                     alert('done!');
                     $('#errorAssign').text('');
                     $('#tableAssign').append(

@@ -51,5 +51,12 @@
             @endif
             </tbody>
         </table>
+        {{--{{ $staffs->links('pagination::bootstrap-4') }}--}}
+        {{ $staffs->appends([
+        'department_id' => $department_id_chose,
+        'name'=> $name,
+        'email' => $email
+        ])->links() }}
+
     </div>
 @endsection

@@ -21,6 +21,7 @@
         <hr class="ml-3 w-25">
     </div>
 @yield('content')
+<div class="spacer"></div>
 @include('client.includes.footer')
 </body>
 </html>

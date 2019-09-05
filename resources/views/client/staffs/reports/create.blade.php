@@ -6,6 +6,7 @@
         <div class="container mt-3">
             <input type="hidden" value="{{ route('client.staffs.delete_report','id') }}" id="getUrlDelete">
             <input type="hidden" value="{{ route('client.staffs.get_tasks_by_project','projectId') }}" id="getTasksByProject">
+            <input type="hidden" value="{{ route('reports.edit','id') }}" id="urlTableEditReport">
             <form method="POST" action="{{ route('client.staffs.store_report') }}" id="formCreateReport">
                 {{ csrf_field() }}
                 <div class="form-row">

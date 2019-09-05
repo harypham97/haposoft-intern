@@ -21,25 +21,22 @@ class StaffController extends Controller
         $email = $request->email;
         $whereClause = [
             ['name', 'like', "%$name%"],
-            ['email', 'like', "%$email%"]
+            ['email', 'like', "%$email%"],
         ];
         $data = [
             'departments' => $departments
         ];
 
-        if ($departmentId !== -1) {
+        if ($departmentId > -1) {
             $whereClause[] = ['department_id', $departmentId];
         }
-
+        $data['staffs'] = User::with('department:id,name')->where($whereClause)->paginate(config('variables.number_per_page'));
         if ($request->has(['department_id', 'name', 'email'])) {
-            $data['staffs'] = User::with('department:id,name')->where($whereClause)->get();
             $data['department_id_chose'] = $departmentId;
             $data['name'] = $name;
             $data['email'] = $email;
             return view('client.customers.staffs.search', $data);
-        } else {
-            $data['staffs'] = User::with('department:id,name')->paginate(config('variables.number_per_page'));
-            return view('client.customers.staffs.index', $data);
         }
+        return view('client.customers.staffs.index', $data);
     }
 }
